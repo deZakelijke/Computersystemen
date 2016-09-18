@@ -1,0 +1,90 @@
+\documentclass[12pt]{article}
+
+\usepackage{times}
+\usepackage{alltt}
+\usepackage{url}
+\usepackage{hyperref}
+\usepackage{comment}
+\usepackage{listings}
+
+\title{Computer System - Bomblab - Voorbeeld van een labjournaal}
+\author{A.Visser@uva.nl}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{lstlisting}[language=bash] 
+This is bomb 22.
+
+It belongs to group22 (group22@fnwi)
+\end{lstlisting}
+
+Voorbeeld van een labjournaal.
+
+Hoe demonteer je de bom. Er zijn 6 fasen.
+
+\section*{Fase 1}
+
+\begin{lstlisting}[language={[x86masm]Assembler}] 
+(gdb) run
+BOOM!
+\end{lstlisting}
+
+\begin{itemize}
+\item \url{http://csapp.cs.cmu.edu/public/docs/gdbnotes-x86-64.pdf} geprint.
+\item bomb.c bekeken. Wat doet functie phase\_1?
+\end{itemize}
+
+\begin{lstlisting}[language={[x86masm]Assembler}]
+(gdb) list main
+(gdb) list 73
+(gdb) list phase_1
+No line number known for phase_1.
+(gdb) disas phase_1
+0x08048adc <phase_1+22>:        call   0x8048828 <sscanf>
+0x08048ae1 <phase_1+27>:        add    $0x10,%esp
+0x08048ae4 <phase_1+30>:        cmp    $0x2,%eax
+0x08048ae7 <phase_1+33>:        je     0x8048aee <phase_1+40>
+0x08048ae9 <phase_1+35>:        call   0x8049321 <explode_bomb>
+\end{lstlisting}
+
+\begin{itemize}
+\item phase\_1 ontploft, behalve als %eax gelijk is aan 2.
+\item \%eax bevat de return waarde van sscanf.
+\item Dus twee argumenten verwacht. Welke twee?
+\end{itemize}
+
+\begin{lstlisting}[language={[x86masm]Assembler}]
+0x08048ad4 <phase_1+14>:        push   $0x80496a6
+0x08048ad9 <phase_1+19>:        pushl  0x8(%ebp) 
+\end{lstlisting}
+
+\begin{itemize}
+\item 0x8(\%ebp) is het argument van de functie phase\_1,
+\item oftewel C-variabele input, gelezen met read\_line.
+\item Wat staat er in het absolute adress \$0x80496a6?
+\end{itemize}
+
+\begin{lstlisting}[language={[x86masm]Assembler}]
+(gdb) x/6c  0x80496a6 
+0x80496a6 <_IO_stdin_used+546>: 37 '%'  100 'd' 32 ' '  37 '%'  100 'd' 0 '\0'
+\end{lstlisting}
+
+\begin{itemize}
+\item Twee integers. De eerste call naar \textless explode\_bomb \textgreater voorkomen. 
+\item Maar er is nog tweede call. Wanneer gaat die af?
+\end{itemize}
+
+\begin{lstlisting}[language={[x86masm]Assembler}]
+(gdb) break phase_1
+Breakpoint 1 at 0x8048acc
+(gdb) run
+(gdb) stepi
+\end{lstlisting}
+
+
+\section*{Succes!}
+\end{document}
+
