@@ -1,0 +1,18 @@
+@include "CalculatorWithLoops.wasm"
+# For loop
+.data MyData: REGISTERS
+0: WORD i
+1: WORD a
+2: WORD tmp
+
+.code MyCode : LOOPS_MACHINE, MyData 
+LOADI i, 0
+LOADI a, 0
+LOADI tmp, 4    	
+loop: 	BEQ i, tmp, end	# if (i == 4) goto end
+	ADDI i, i, 1  	# i = i +1
+	ADDI a, a, 8 	# (tussen)resultaat
+	BRA  loop    # zolang i < 4 goto loop
+end: HALT			 # einde programma
+
+

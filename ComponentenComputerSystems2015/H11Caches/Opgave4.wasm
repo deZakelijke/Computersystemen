@@ -1,0 +1,28 @@
+@include "16bitSetAssociativeCache.wasm"
+# Copy 9 values stored in memory locations 61..69 
+# to the locations 70...79.
+
+.data MyData : DATAMEM
+0d61: 	WORD base 0d10
+       	WORD      0d11
+	WORD      0d12
+       	WORD      0d13
+	WORD      0d14
+       	WORD      0d15
+	WORD      0d16
+       	WORD      0d17
+	WORD      0d18
+0d0:	WORD base2
+
+.code MyCode  : HARVARD, MyData
+	LOADI $5, 9	# 9 getallen
+	LOADI $6, 0	# Start at element 0
+
+loop:	LW $1, base, $6	# haalt getal uit geheugen
+	SW $1, base2, $6
+	ADDI $6, $6, 1	# volgende getal en volgende adres 
+	BNE $6, $5, loop	# nog geen 9 getallen? dan loop
+		
+end: 	HALT
+
+

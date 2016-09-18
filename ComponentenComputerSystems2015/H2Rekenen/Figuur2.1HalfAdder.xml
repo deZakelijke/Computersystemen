@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<COMPLEX NAME="Half Adder" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <RECTANGLE COLOR="#666666" POSX="70.0" POSY="30.0" WIDTH="130.0"
+            HEIGHT="150.0" RADIUSX="15.0" RADIUSY="15.0">
+            <STROKE LINEWIDTH="2.0"/>
+        </RECTANGLE>
+        <TEXT POSX="140.0" POSY="40.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Serif,plain,16.0">Half adder</TEXT>
+        <TEXT POSX="140.0" POSY="190.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Serif,plain,14.0">Figuur 2.1</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="1" SIGNED="false" POSX="70.0" POSY="70.0" NAME="a">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="70.0" POSY="150.0" NAME="b">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="200.0" POSY="140.0" NAME="Carry">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="200.0" POSY="80.0" NAME="Sum">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <SUBCOMPONENTS>
+        <SUBCOMPONENT NAME="2inputAND" DATA="2-inputAND.xml" POSX="40.0"
+            POSY="110.0" ZOOM="1.0" FLIP="NONE">
+            <PARAMETERVALS/>
+            <STUBS>
+                <STUB POSX="70.0" POSY="40.0" PIN="w"/>
+                <STUB POSX="130.0" POSY="30.0" PIN="Z"/>
+                <STUB POSX="70.0" POSY="20.0" PIN="v"/>
+            </STUBS>
+        </SUBCOMPONENT>
+        <SUBCOMPONENT NAME="XOR" DATA="XOR.xml" POSX="50.0" POSY="50.0"
+            ZOOM="1.0" FLIP="NONE">
+            <PARAMETERVALS/>
+            <STUBS>
+                <STUB POSX="60.0" POSY="20.0" PIN="a"/>
+                <STUB POSX="120.0" POSY="30.0" PIN="Y"/>
+                <STUB POSX="60.0" POSY="40.0" PIN="b"/>
+            </STUBS>
+        </SUBCOMPONENT>
+    </SUBCOMPONENTS>
+    <WIRES>
+        <WIRE NAME="Wire" COLOR="#000000">
+            <STROKE/>
+            <NODES>
+                <MAINPIN ID="6afc23fe2734cc40" PIN="a"/>
+                <SUBPIN ID="7d78d5edff58c66f" SUBCOMPONENT="XOR" PIN="a"/>
+                <SPLIT ID="8114d9857bb3fd49" POSX="90.0" POSY="70.0"/>
+                <SUBPIN ID="d609938bb4196d9f" SUBCOMPONENT="2inputAND" PIN="v"/>
+                <SPLIT ID="e8a0747b6103e444" POSX="90.0" POSY="130.0"/>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="6afc23fe2734cc40"/>
+                    <NODEREF NODE="8114d9857bb3fd49"/>
+                </SPAN>
+                <SPAN>
+                    <NODEREF NODE="7d78d5edff58c66f"/>
+                    <NODEREF NODE="8114d9857bb3fd49"/>
+                </SPAN>
+                <SPAN>
+                    <NODEREF NODE="8114d9857bb3fd49"/>
+                    <NODEREF NODE="e8a0747b6103e444"/>
+                    <NODEREF NODE="d609938bb4196d9f"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (2)" COLOR="#000000">
+            <STROKE/>
+            <NODES>
+                <SUBPIN ID="d2ea706815a70798" SUBCOMPONENT="XOR" PIN="Y"/>
+                <MAINPIN ID="d84b10668bf4f2" PIN="Sum"/>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="d2ea706815a70798"/>
+                    <NODEREF NODE="d84b10668bf4f2"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (3)" COLOR="#000000">
+            <STROKE/>
+            <NODES>
+                <MAINPIN ID="4a6258980a4c352a" PIN="b"/>
+                <SUBPIN ID="1ef655b195bf4fa9" SUBCOMPONENT="2inputAND" PIN="w"/>
+                <SPLIT ID="873c28f8f0e9e919" POSX="100.0" POSY="150.0"/>
+                <SUBPIN ID="38ea5b1560192c12" SUBCOMPONENT="XOR" PIN="b"/>
+                <SPLIT ID="f885f16af51d1b89" POSX="100.0" POSY="90.0"/>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="4a6258980a4c352a"/>
+                    <NODEREF NODE="873c28f8f0e9e919"/>
+                </SPAN>
+                <SPAN>
+                    <NODEREF NODE="1ef655b195bf4fa9"/>
+                    <NODEREF NODE="873c28f8f0e9e919"/>
+                </SPAN>
+                <SPAN>
+                    <NODEREF NODE="873c28f8f0e9e919"/>
+                    <NODEREF NODE="f885f16af51d1b89"/>
+                    <NODEREF NODE="38ea5b1560192c12"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (4)" COLOR="#000000">
+            <STROKE/>
+            <NODES>
+                <SUBPIN ID="c5814124912fe20a" SUBCOMPONENT="2inputAND" PIN="Z"/>
+                <MAINPIN ID="3656995c9fe4065a" PIN="Carry"/>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="c5814124912fe20a"/>
+                    <NODEREF NODE="3656995c9fe4065a"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+    </WIRES>
+</COMPLEX>

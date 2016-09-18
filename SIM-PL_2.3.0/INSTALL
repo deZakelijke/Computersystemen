@@ -1,0 +1,30 @@
+1. Requirements
+======================================================================
+SIM-PL requires at least
+-  Java^{TM} 2 Platform Standard Edition 5.0. (J2SE 5.0)
+   Sun provides gratis implementations of this platform here
+     http://java.sun.com/javase/downloads/index.jsp
+   SIM-PL has not been tested with other implementations of this 
+   platform.
+
+-  A decent box. SIM-PL runs fine on
+   - 1.5 GHz processor
+   - 512 MB ram
+   SIM-PL has not been tested under much lower specs.
+
+
+
+2. Deployment
+======================================================================
+Just unzip the SIM-PL archive somewhere, and you're done! (This is one
+of the advantages of being a pure Java application) 
+
+
+3. Running SIM-PL
+======================================================================
+The archive extracted under (2.) contains two executable jar files
+  - Executer.jar
+  - Editor.jar
+Each of these starts the corresponding application. SIM-PL can be
+invoked from the command-line using 
+  java -jar Executer.jar    or   java -jar Editor.jar

@@ -1,0 +1,51 @@
+WON'T FIX
+#1  the truth-table functionality does not work for components for which
+	the propagation delay equals the preferred cycle length.
+
+
+SOLVED
+#2	Deleting a subcomponent in the editor causes all wires connected to it
+	to point to (0,0).
+
+
+SOLVED
+#3	Probes do not move when their wire is moved.
+
+
+SOLVED
+#4	When SIM-PL looks for a sub-component, it prefers the (edited)
+	component in memory over the component on disk. This causes
+	"Save As..." to work unexpected. Typical use: one opens a component,
+	changes it a little and then performs a "Save As...". Currently, all
+	other components that contain the original component display the
+	changed version of the component. This even when the original is
+	closed, and changes discarded.
+
+SOLVED
+#5a	Not all property editors are fully functional. In particular
+	- fill dialog has no configurable transparency
+	- stroke dialog: example drawing could be improved
+
+WON'T FIX
+#5b	Not all property editors are fully functional. In particular
+	- fill dialog has no configurable transparency
+	- stroke dialog: example drawing could be improved
+
+
+SOLVED
+#6	Moving pins and labels causes labels to be moved twice.
+
+
+SOLVED
+#7	Loose outputs do not get probes automatically
+
+
+
+SOLVED
+#8	Settings -> {"View values", "View pin labels"} in Executer do not
+	work anymore.
+
+
+SOLVED
+#9	Chances in text of some component are not reflected in components that
+	include it.

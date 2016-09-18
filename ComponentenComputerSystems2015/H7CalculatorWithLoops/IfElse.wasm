@@ -1,0 +1,16 @@
+@include "CalculatorWithLoops.wasm"
+# if .. then ...
+.data MyData: REGISTERS
+0: WORD a
+1: WORD b  5
+2: WORD c  7
+3: WORD i  3
+4: WORD j  4
+
+.code MyCode : LOOPS_MACHINE, MyData 
+	BEQ i, j, if	# if( i == j ) goto if
+	SUB a, b, c  	# else 
+	BRA end		# goto end
+if: 	ADD a, b, c
+end:	HALT		# einde programma
+

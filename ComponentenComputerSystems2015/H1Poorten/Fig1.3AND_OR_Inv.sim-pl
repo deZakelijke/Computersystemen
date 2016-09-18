@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COMPLEX NAME="AND_OR_Inv" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <TEXT POSX="170.0" POSY="-10.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="DialogInput,plain,14.0">AND/OR/Inverter</TEXT>
+        <RECTANGLE COLOR="#666666" POSX="70.0" POSY="-20.0"
+            WIDTH="200.0" HEIGHT="140.0" RADIUSX="15.0" RADIUSY="15.0">
+            <STROKE LINEWIDTH="2.0"/>
+        </RECTANGLE>
+        <TEXT POSX="170.0" POSY="130.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="DialogInput,plain,12.0">Figuur 1.3</TEXT>
+        <TEXT POSX="170.0" POSY="64.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="DialogInput,plain,14.0">P2</TEXT>
+        <TEXT POSX="170.0" POSY="16.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="DialogInput,plain,14.0">P1</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="1" SIGNED="false" POSX="70.0" POSY="20.0" NAME="a">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="70.0" POSY="40.0" NAME="b">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="70.0" POSY="80.0" NAME="c">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="270.0" POSY="40.0" NAME="Y">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <SUBCOMPONENTS>
+        <SUBCOMPONENT NAME="OR" DATA="2-inputOR.xml" POSX="130.0"
+            POSY="10.0" ZOOM="1.0" FLIP="NONE"/>
+        <SUBCOMPONENT NAME="and" DATA="2-inputAND.xml" POSX="20.0"
+            POSY="0.0" ZOOM="1.0" FLIP="NONE"/>
+        <SUBCOMPONENT NAME="iverter" DATA="Inverter.xml" POSX="30.0"
+            POSY="50.0" ZOOM="1.0" FLIP="NONE"/>
+    </SUBCOMPONENTS>
+    <CABLEGRAPH>
+        <NODES>
+            <CGPIN ID="2d7ff60aed6e67ac" PINREF="a"/>
+            <CGPIN ID="31df6dbeeabee069" PINREF="and:v"/>
+            <CGPIN ID="ffe2563fd0a4d43" PINREF="and:Z"/>
+            <CGPIN ID="bbeb170cecb675ef" PINREF="OR:v"/>
+            <CGPIN ID="2f1d3509c2c34424" PINREF="iverter:Z"/>
+            <CGPIN ID="14d232818b3625fa" PINREF="OR:w"/>
+            <CGPIN ID="c910cfef65592363" PINREF="OR:Z"/>
+            <CGPIN ID="76c2df33822d62e4" PINREF="Y"/>
+            <CGPIN ID="c5960c6944aed9fa" PINREF="b"/>
+            <CGPIN ID="a8f213999ff77fca" PINREF="and:w"/>
+            <CGPIN ID="b6da390063861d11" PINREF="c"/>
+            <CGPIN ID="41c5e883a1a4d26f" PINREF="iverter:v"/>
+        </NODES>
+        <EDGES>
+            <EDGE NODE1="2d7ff60aed6e67ac" NODE2="31df6dbeeabee069" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+            </EDGE>
+            <EDGE NODE1="ffe2563fd0a4d43" NODE2="bbeb170cecb675ef" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+            </EDGE>
+            <EDGE NODE1="2f1d3509c2c34424" NODE2="14d232818b3625fa" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+                <POINT POSX="160.0" POSY="80.0"/>
+                <POINT POSX="160.0" POSY="50.0"/>
+            </EDGE>
+            <EDGE NODE1="c910cfef65592363" NODE2="76c2df33822d62e4" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+            </EDGE>
+            <EDGE NODE1="c5960c6944aed9fa" NODE2="a8f213999ff77fca" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+            </EDGE>
+            <EDGE NODE1="b6da390063861d11" NODE2="41c5e883a1a4d26f" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+            </EDGE>
+        </EDGES>
+        <PROBES>
+            <PROBE NODE="ffe2563fd0a4d43" POSX="170.0" POSY="30.0"
+                HALIGN="CENTER" VALIGN="CENTER"/>
+            <PROBE NODE="2f1d3509c2c34424" POSX="170.0" POSY="50.0"
+                HALIGN="CENTER" VALIGN="CENTER"/>
+            <PROBE NODE="76c2df33822d62e4" POSX="270.0" POSY="40.0"
+                HALIGN="CENTER" VALIGN="CENTER"/>
+        </PROBES>
+    </CABLEGRAPH>
+</COMPLEX>

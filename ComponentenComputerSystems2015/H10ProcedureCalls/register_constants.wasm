@@ -1,0 +1,23 @@
+# You can use @ include to use this file in your program
+
+	WORD $zero 0
+
+	WORD $val1    # return value registers
+	WORD $val2
+
+	WORD $arg1    # procedure parameter registers
+	WORD $arg2
+	WORD $arg3
+	WORD $arg4
+
+	WORD $tmp0     # temporary registers
+	WORD $tmp1     # used as scratch
+	WORD $tmp2
+	WORD $tmp3
+
+	WORD $s1     # saved registers
+	WORD $s2
+	WORD $s3
+
+	WORD $sp 511 # sp points to the first free cell
+	WORD $ra    # return address

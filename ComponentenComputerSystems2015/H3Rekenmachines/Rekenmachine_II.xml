@@ -1,0 +1,435 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<COMPLEX NAME="Rekenmachine_II" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="100">
+    <PARAMETERS/>
+    <FORMS>
+        <TEXT POSX="270.0" POSY="-35.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Dialog,bold,15.0">Rekenmachine II</TEXT>
+        <RECTANGLE COLOR="#999999" POSX="-40.0" POSY="-20.0"
+            WIDTH="615.0" HEIGHT="325.0" RADIUSX="15.0" RADIUSY="15.0">
+            <STROKE LINEWIDTH="2.0"/>
+        </RECTANGLE>
+        <TEXT POSX="485.0" POSY="230.0" HALIGN="LEFT" VALIGN="CENTER"
+            COLOR="#000000" FONT="SansSerif,bold,9.0">S2 S1 S0
+0    0    0   +
+0    0    1    -
+0    1    0   AND
+0    1    1   OR
+1    0    0   XOR
+1    0    1   SHL
+1    1    0   SHR
+1    1    1   B</TEXT>
+        <TEXT POSX="315.0" POSY="10.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="SansSerif,plain,11.0">Opcode ALU</TEXT>
+        <TEXT POSX="505.0" POSY="65.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="SansSerif,bold,9.0">S2  S1  S0</TEXT>
+        <TEXT POSX="440.0" POSY="120.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="SansSerif,plain,11.0">SecReg</TEXT>
+        <TEXT POSX="325.0" POSY="30.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="SansSerif,plain,11.0">Constant number</TEXT>
+        <TEXT POSX="325.0" POSY="-10.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="SansSerif,plain,11.0">Second register</TEXT>
+    </FORMS>
+    <IO/>
+    <SUBCOMPONENTS>
+        <SUBCOMPONENT NAME="Clock" DATA="Clock.xml" POSX="-70.0"
+            POSY="220.0" ZOOM="1.0" FLIP="NONE">
+            <PARAMETERVALS/>
+            <STUBS>
+                <STUB POSX="100.0" POSY="30.0" PIN="Clock"/>
+            </STUBS>
+        </SUBCOMPONENT>
+        <SUBCOMPONENT NAME="PC" DATA="pc.xml" POSX="20.0" POSY="120.0"
+            ZOOM="1.0" FLIP="NONE">
+            <PARAMETERVALS/>
+            <STUBS>
+                <STUB POSX="20.0" POSY="50.0" PIN="CLK"/>
+                <STUB POSX="50.0" POSY="0.0" PIN="Out"/>
+            </STUBS>
+        </SUBCOMPONENT>
+        <SUBCOMPONENT NAME="ALU" DATA="Alu.xml" POSX="500.0"
+            POSY="130.0" ZOOM="1.0" FLIP="NONE">
+            <PARAMETERVALS/>
+            <STUBS>
+                <STUB POSX="-20.0" POSY="30.0" PIN="Src1"/>
+                <STUB POSX="-20.0" POSY="-30.0" PIN="Src0"/>
+                <STUB POSX="30.0" POSY="0.0" PIN="Result"/>
+                <STUB POSX="-5.0" POSY="-40.0" PIN="S2"/>
+                <STUB POSX="5.0" POSY="-35.0" PIN="S1"/>
+                <STUB POSX="15.0" POSY="-30.0" PIN="S0"/>
+            </STUBS>
+        </SUBCOMPONENT>
+        <SUBCOMPONENT NAME="Multiplexor" DATA="Multiplexor.xml"
+            POSX="430.0" POSY="160.0" ZOOM="1.0" FLIP="NONE">
+            <PARAMETERVALS/>
+            <STUBS>
+                <STUB POSX="20.0" POSY="0.0" PIN="Out"/>
+                <STUB POSX="-10.0" POSY="10.0" PIN="In1"/>
+                <STUB POSX="5.0" POSY="-15.0" PIN="Switch"/>
+                <STUB POSX="-10.0" POSY="-10.0" PIN="In0"/>
+            </STUBS>
+        </SUBCOMPONENT>
+        <SUBCOMPONENT NAME="Registers" DATA="Registers.xml" POSX="330.0"
+            POSY="130.0" ZOOM="1.0" FLIP="NONE">
+            <PARAMETERVALS/>
+            <STUBS>
+                <STUB POSX="60.0" POSY="30.0" PIN="Reg1"/>
+                <STUB POSX="60.0" POSY="-30.0" PIN="Reg0"/>
+                <STUB POSX="-50.0" POSY="90.0" PIN="WriteData"/>
+                <STUB POSX="0.0" POSY="120.0" PIN="CLK"/>
+                <STUB POSX="-50.0" POSY="30.0" PIN="Read1"/>
+                <STUB POSX="-50.0" POSY="-30.0" PIN="Read0"/>
+                <STUB POSX="-50.0" POSY="70.0" PIN="WriteReg"/>
+            </STUBS>
+        </SUBCOMPONENT>
+        <SUBCOMPONENT NAME="ALUOpcode" DATA="ALUOpcode.xml" POSX="315.0"
+            POSY="10.0" ZOOM="1.0" FLIP="NONE">
+            <PARAMETERVALS/>
+            <STUBS>
+                <STUB POSX="160.0" POSY="10.0" PIN="S"/>
+                <STUB POSX="180.0" POSY="10.0" PIN="S2"/>
+                <STUB POSX="190.0" POSY="10.0" PIN="S1"/>
+                <STUB POSX="200.0" POSY="10.0" PIN="S0"/>
+            </STUBS>
+        </SUBCOMPONENT>
+        <SUBCOMPONENT NAME="Control_II" DATA="Control_II.xml"
+            POSX="-20.0" POSY="-150.0" ZOOM="1.0" FLIP="NONE">
+            <PARAMETERVALS/>
+            <STUBS>
+                <STUB POSX="260.0" POSY="270.0" PIN="Instruction"/>
+                <STUB POSX="260.0" POSY="310.0" PIN="RT"/>
+                <STUB POSX="260.0" POSY="250.0" PIN="RS"/>
+                <STUB POSX="260.0" POSY="350.0" PIN="RD"/>
+                <STUB POSX="260.0" POSY="170.0" PIN="S"/>
+                <STUB POSX="260.0" POSY="150.0" PIN="SecReg"/>
+                <STUB POSX="260.0" POSY="190.0" PIN="IMM"/>
+            </STUBS>
+        </SUBCOMPONENT>
+        <SUBCOMPONENT NAME="Instruction Memory_II"
+            DATA="InstructionMemory_II.xml" POSX="140.0" POSY="120.0"
+            ZOOM="1.0" FLIP="NONE">
+            <PARAMETERVALS/>
+            <STUBS>
+                <STUB POSX="-40.0" POSY="0.0" PIN="Address"/>
+                <STUB POSX="50.0" POSY="0.0" PIN="Data"/>
+            </STUBS>
+        </SUBCOMPONENT>
+    </SUBCOMPONENTS>
+    <WIRES>
+        <WIRE NAME="Clock" COLOR="#FF0000">
+            <STROKE/>
+            <NODES>
+                <SUBPIN ID="7e42190658f9a522" SUBCOMPONENT="Clock" PIN="Clock"/>
+                <SPLIT ID="1aedb58345407aeb" POSX="40.0" POSY="250.0"/>
+                <SUBPIN ID="47ff2bcb3d43219b" SUBCOMPONENT="PC" PIN="CLK"/>
+                <SPLIT ID="14cc405d82a50d14" POSX="40.0" POSY="230.0"/>
+                <SPLIT ID="66d12396e1c7dae5" POSX="40.0" POSY="250.0"/>
+                <SUBPIN ID="612fe120e60a3345" SUBCOMPONENT="Registers" PIN="CLK"/>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="7e42190658f9a522"/>
+                    <NODEREF NODE="1aedb58345407aeb"/>
+                    <NODEREF NODE="66d12396e1c7dae5"/>
+                </SPAN>
+                <SPAN>
+                    <NODEREF NODE="47ff2bcb3d43219b"/>
+                    <NODEREF NODE="14cc405d82a50d14"/>
+                    <NODEREF NODE="66d12396e1c7dae5"/>
+                </SPAN>
+                <SPAN>
+                    <NODEREF NODE="66d12396e1c7dae5"/>
+                    <NODEREF NODE="612fe120e60a3345"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (7)" COLOR="#000000">
+            <STROKE LINEWIDTH="2.0"/>
+            <NODES>
+                <SUBPIN ID="8851be1fb7cfa13e" SUBCOMPONENT="Multiplexor" PIN="Out"/>
+                <SUBPIN ID="6f4aa1a6332a847e" SUBCOMPONENT="ALU" PIN="Src1"/>
+                <SPLIT ID="bb6a0b84538c3fad" POSX="460.0" POSY="160.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="8851be1fb7cfa13e"/>
+                    <NODEREF NODE="bb6a0b84538c3fad"/>
+                    <NODEREF NODE="6f4aa1a6332a847e"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (8)" COLOR="#000000">
+            <STROKE LINEWIDTH="2.0"/>
+            <NODES>
+                <SUBPIN ID="7bba79b801a2d1b" SUBCOMPONENT="Registers" PIN="Reg1"/>
+                <SUBPIN ID="8173b6fc331cd198" SUBCOMPONENT="Multiplexor" PIN="In1"/>
+                <SPLIT ID="af5b0a40faa3f197" POSX="405.0" POSY="160.0"/>
+                <SPLIT ID="522f9ed31afe9ec3" POSX="405.0" POSY="170.0"/>
+                <SPLIT ID="f7e0efa0574b73fe" POSX="405.0" POSY="160.0"/>
+                <SPLIT ID="4a2ce8cad34773c9" POSX="405.0" POSY="170.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="7bba79b801a2d1b"/>
+                    <NODEREF NODE="f7e0efa0574b73fe"/>
+                    <NODEREF NODE="af5b0a40faa3f197"/>
+                    <NODEREF NODE="4a2ce8cad34773c9"/>
+                    <NODEREF NODE="522f9ed31afe9ec3"/>
+                    <NODEREF NODE="8173b6fc331cd198"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (9)" COLOR="#000000">
+            <STROKE LINEWIDTH="2.0"/>
+            <NODES>
+                <SUBPIN ID="82750cc73ea6c35d" SUBCOMPONENT="Registers" PIN="Reg0"/>
+                <SUBPIN ID="6f6dced36e706684" SUBCOMPONENT="ALU" PIN="Src0"/>
+                <SPLIT ID="93ac365589c5016b" POSX="460.0" POSY="100.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="82750cc73ea6c35d"/>
+                    <NODEREF NODE="93ac365589c5016b"/>
+                    <NODEREF NODE="6f6dced36e706684"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (10)" COLOR="#000000">
+            <STROKE LINEWIDTH="2.0"/>
+            <NODES>
+                <SUBPIN ID="6f34fb6315b38ea4" SUBCOMPONENT="ALU" PIN="Result"/>
+                <SUBPIN ID="ae722b26ddce9cc1" SUBCOMPONENT="Registers" PIN="WriteData"/>
+                <SPLIT ID="abf096a0940a5f6c" POSX="560.0" POSY="130.0"/>
+                <SPLIT ID="b76da3711c1fbaa8" POSX="560.0" POSY="290.0"/>
+                <SPLIT ID="5a61fb75e9342a08" POSX="250.0" POSY="290.0"/>
+                <SPLIT ID="52cf2afe717ca4cf" POSX="250.0" POSY="220.0"/>
+                <SPLIT ID="709ea2a688e6ab6" POSX="260.0" POSY="220.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+                <SPLIT ID="d6ca891df2b7a6de" POSX="550.0" POSY="130.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="6f34fb6315b38ea4"/>
+                    <NODEREF NODE="d6ca891df2b7a6de"/>
+                    <NODEREF NODE="abf096a0940a5f6c"/>
+                    <NODEREF NODE="b76da3711c1fbaa8"/>
+                    <NODEREF NODE="5a61fb75e9342a08"/>
+                    <NODEREF NODE="52cf2afe717ca4cf"/>
+                    <NODEREF NODE="709ea2a688e6ab6"/>
+                    <NODEREF NODE="ae722b26ddce9cc1"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire" COLOR="#000000">
+            <STROKE LINEWIDTH="2.0"/>
+            <NODES>
+                <SUBPIN ID="cf4fa523980055" SUBCOMPONENT="PC" PIN="Out"/>
+                <SUBPIN ID="74f00627a2ee9c03"
+                    SUBCOMPONENT="Instruction Memory_II" PIN="Address"/>
+                <SPLIT ID="f957bd775d92b1ab" POSX="85.0" POSY="120.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="cf4fa523980055"/>
+                    <NODEREF NODE="f957bd775d92b1ab"/>
+                    <NODEREF NODE="74f00627a2ee9c03"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (12)" COLOR="#000000">
+            <STROKE LINEWIDTH="3.0"/>
+            <NODES>
+                <SUBPIN ID="5b1d32972c02e453"
+                    SUBCOMPONENT="Instruction Memory_II" PIN="Data"/>
+                <SUBPIN ID="cbccec66f6dfba2e" SUBCOMPONENT="Control_II" PIN="Instruction"/>
+                <SPLIT ID="23d6e191a70e1fe0" POSX="210.0" POSY="120.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="5b1d32972c02e453"/>
+                    <NODEREF NODE="23d6e191a70e1fe0"/>
+                    <NODEREF NODE="cbccec66f6dfba2e"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (13)" COLOR="#00CC00">
+            <STROKE LINEWIDTH="1.5"/>
+            <NODES>
+                <SUBPIN ID="aa3ac412c83f878" SUBCOMPONENT="Control_II" PIN="RT"/>
+                <SUBPIN ID="b02e429fa5aae7db" SUBCOMPONENT="Registers" PIN="Read1"/>
+                <SPLIT ID="36d7b49c3a02716d" POSX="260.0" POSY="160.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="aa3ac412c83f878"/>
+                    <NODEREF NODE="36d7b49c3a02716d"/>
+                    <NODEREF NODE="b02e429fa5aae7db"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (14)" COLOR="#00CC00">
+            <STROKE LINEWIDTH="1.5"/>
+            <NODES>
+                <SUBPIN ID="2a818465d061be6d" SUBCOMPONENT="Control_II" PIN="RS"/>
+                <SUBPIN ID="fe5875b6ec5a554" SUBCOMPONENT="Registers" PIN="Read0"/>
+                <SPLIT ID="dc8ef4882619b269" POSX="260.0" POSY="100.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="2a818465d061be6d"/>
+                    <NODEREF NODE="dc8ef4882619b269"/>
+                    <NODEREF NODE="fe5875b6ec5a554"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (15)" COLOR="#00CC00">
+            <STROKE LINEWIDTH="1.5"/>
+            <NODES>
+                <SUBPIN ID="6f6a6455fd78b0d0" SUBCOMPONENT="Control_II" PIN="RD"/>
+                <SUBPIN ID="fbddb90d5077e268" SUBCOMPONENT="Registers" PIN="WriteReg"/>
+                <SPLIT ID="41c38f9e49825eba" POSX="260.0" POSY="200.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="6f6a6455fd78b0d0"/>
+                    <NODEREF NODE="41c38f9e49825eba"/>
+                    <NODEREF NODE="fbddb90d5077e268"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (16)" COLOR="#FF0000">
+            <STROKE LINEWIDTH="1.5"/>
+            <NODES>
+                <SUBPIN ID="fd4ab99c1a03c641" SUBCOMPONENT="Control_II" PIN="S"/>
+                <SUBPIN ID="b74cc234021a77eb" SUBCOMPONENT="ALUOpcode" PIN="S"/>
+                <SPLIT ID="1c43d908d73b6a35" POSX="260.0" POSY="20.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="fd4ab99c1a03c641"/>
+                    <NODEREF NODE="1c43d908d73b6a35"/>
+                    <NODEREF NODE="b74cc234021a77eb"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (17)" COLOR="#FF0000">
+            <STROKE/>
+            <NODES>
+                <SUBPIN ID="d61a13a5c77fa831" SUBCOMPONENT="ALUOpcode" PIN="S2"/>
+                <SUBPIN ID="d12449991aececa6" SUBCOMPONENT="ALU" PIN="S2"/>
+                <SPLIT ID="bfc79e28076e2e8a" POSX="495.0" POSY="80.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="d61a13a5c77fa831"/>
+                    <NODEREF NODE="bfc79e28076e2e8a"/>
+                    <NODEREF NODE="d12449991aececa6"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (18)" COLOR="#FF0000">
+            <STROKE/>
+            <NODES>
+                <SUBPIN ID="9ac337aa958a0300" SUBCOMPONENT="ALUOpcode" PIN="S1"/>
+                <SUBPIN ID="1988c2d6404e158f" SUBCOMPONENT="ALU" PIN="S1"/>
+                <SPLIT ID="79ac53cb77ec8291" POSX="505.0" POSY="80.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="9ac337aa958a0300"/>
+                    <NODEREF NODE="79ac53cb77ec8291"/>
+                    <NODEREF NODE="1988c2d6404e158f"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (19)" COLOR="#FF0000">
+            <STROKE/>
+            <NODES>
+                <SUBPIN ID="e11f0ec8d0dd4347" SUBCOMPONENT="ALUOpcode" PIN="S0"/>
+                <SUBPIN ID="508a8316efe20539" SUBCOMPONENT="ALU" PIN="S0"/>
+                <SPLIT ID="c1b79cf686bbecd1" POSX="515.0" POSY="80.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="e11f0ec8d0dd4347"/>
+                    <NODEREF NODE="c1b79cf686bbecd1"/>
+                    <NODEREF NODE="508a8316efe20539"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (20)" COLOR="#FF0000">
+            <STROKE/>
+            <NODES>
+                <SUBPIN ID="b22dd26c43ba5471" SUBCOMPONENT="Multiplexor" PIN="Switch"/>
+                <SUBPIN ID="1cd4de2413e2fe8d" SUBCOMPONENT="Control_II" PIN="SecReg"/>
+                <SPLIT ID="408c1af5c8173490" POSX="435.0" POSY="0.0"/>
+                <SPLIT ID="784ed859f7ec3662" POSX="260.0" POSY="0.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+                <SPLIT ID="e843de6ee6b5e25a" POSX="435.0" POSY="135.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="b22dd26c43ba5471"/>
+                    <NODEREF NODE="e843de6ee6b5e25a"/>
+                    <NODEREF NODE="408c1af5c8173490"/>
+                    <NODEREF NODE="784ed859f7ec3662"/>
+                    <NODEREF NODE="1cd4de2413e2fe8d"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+        <WIRE NAME="Wire (21)" COLOR="#000000">
+            <STROKE LINEWIDTH="2.0"/>
+            <NODES>
+                <SUBPIN ID="e15a0a8d748e7dfd" SUBCOMPONENT="Control_II" PIN="IMM"/>
+                <SUBPIN ID="bea8b59427679a7f" SUBCOMPONENT="Multiplexor" PIN="In0"/>
+                <SPLIT ID="c87756870a853102" POSX="405.0" POSY="40.0"/>
+                <SPLIT ID="75f6c5cb17a6bd03" POSX="405.0" POSY="150.0"/>
+                <SPLIT ID="4a84f577152a3beb" POSX="405.0" POSY="150.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+                <SPLIT ID="94921bfb46c4232c" POSX="260.0" POSY="40.0">
+                    <PROBE POSX="0.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"/>
+                </SPLIT>
+            </NODES>
+            <SPANS>
+                <SPAN>
+                    <NODEREF NODE="e15a0a8d748e7dfd"/>
+                    <NODEREF NODE="94921bfb46c4232c"/>
+                    <NODEREF NODE="c87756870a853102"/>
+                    <NODEREF NODE="4a84f577152a3beb"/>
+                    <NODEREF NODE="75f6c5cb17a6bd03"/>
+                    <NODEREF NODE="bea8b59427679a7f"/>
+                </SPAN>
+            </SPANS>
+        </WIRE>
+    </WIRES>
+</COMPLEX>

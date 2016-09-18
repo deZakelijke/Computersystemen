@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<COMPLEX NAME="hulpfig26" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <RECTANGLE COLOR="#000000" POSX="120.0" POSY="115.0"
+            WIDTH="30.0" HEIGHT="40.0" RADIUSX="0.0" RADIUSY="0.0">
+            <STROKE DASHING="5.0, 5.0"/>
+        </RECTANGLE>
+        <TEXT POSX="135.0" POSY="130.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Serif,plain,14.0">?</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="1" SIGNED="false" POSX="120.0" POSY="125.0" NAME="sub_add">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="120.0" POSY="145.0" NAME="b2">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="150.0" POSY="135.0" NAME="b2*">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <SUBCOMPONENTS/>
+    <WIRES/>
+</COMPLEX>

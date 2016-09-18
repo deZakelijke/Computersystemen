@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="Cache" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <TEXT POSX="-30.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Dialog,plain,12.0">D
+i
+r
+e
+c
+t</TEXT>
+        <TEXT POSX="70.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Dialog,plain,12.0">C
+a
+c
+h
+e</TEXT>
+        <POLYGON COLOR="#333333">
+            <STROKE LINEWIDTH="2.0"/>
+            <POINT POSX="-40.0" POSY="-70.0"/>
+            <POINT POSX="-40.0" POSY="-50.0"/>
+            <POINT POSX="-40.0" POSY="60.0"/>
+            <POINT POSX="-20.0" POSY="60.0"/>
+            <POINT POSX="-20.0" POSY="-50.0"/>
+            <POINT POSX="60.0" POSY="-50.0"/>
+            <POINT POSX="60.0" POSY="60.0"/>
+            <POINT POSX="80.0" POSY="60.0"/>
+            <POINT POSX="80.0" POSY="-50.0"/>
+            <POINT POSX="80.0" POSY="-70.0"/>
+        </POLYGON>
+        <TEXT POSX="20.0" POSY="-60.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="SansSerif,plain,13.0">Mapped</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="16" SIGNED="false" POSX="-40.0" POSY="-20.0" NAME="Address">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="16" SIGNED="false" POSX="-40.0" POSY="30.0" NAME="WriteData">
+            <LABEL POSX="-10.0" POSY="-10.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="10.0" POSY="-70.0" NAME="MemRead">
+            <LABEL POSX="0.0" POSY="-10.0" HALIGN="CENTER" VALIGN="BOTTOM"/>
+        </INPUT>
+        <OUTPUT BITS="16" SIGNED="false" POSX="80.0" POSY="0.0" NAME="ReadData">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="9" SIGNED="false" POSX="-20.0" POSY="-20.0" NAME="MMAddress">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="16" SIGNED="false" POSX="-20.0" POSY="30.0" NAME="MMWriteData">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <INPUT BITS="64" SIGNED="false" POSX="60.0" POSY="0.0" NAME="MMReadData">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="-40.0" POSY="40.0" NAME="CacheReady">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="10.0" POSY="-50.0" NAME="MMMemRead">
+            <LABEL POSX="0.0" POSY="10.0" HALIGN="CENTER" VALIGN="TOP"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="30.0" POSY="-50.0" NAME="MMMemWrite">
+            <LABEL POSX="0.0" POSY="10.0" HALIGN="CENTER" VALIGN="TOP"/>
+        </OUTPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="30.0" POSY="-70.0" NAME="MemWrite">
+            <LABEL POSX="0.0" POSY="-10.0" HALIGN="CENTER" VALIGN="BOTTOM"/>
+        </INPUT>
+    </IO>
+    <MEMORY>
+        <STORAGE NAME="stall" SIZE="1" BITS="3" SIGNED="false"/>
+        <STORAGE NAME="VTagDatas" SIZE="16" BITS="68" SIGNED="false"/>
+    </MEMORY>
+    <INTERNALS DELAY="10">
+        <ACTION EVENT="CLOCK_FALLING">/* Direct mapped write-through cache 
+================================================================================
+The Harvard processor uses a 512 word memory. Hence each address is 9 bits 
+wide. This cache uses 4 word data blocks, thus our block offset eats 2 bits. 
+This cache has 16 blocks; we use 4 bits for the index. In total, 3 bits remain 
+for the tag. In summary, a memory address is divided in these three parts:
+	Tag (3 bit) | Index (4 bit)  |  Block Offset (2 bit)
+
+
+In this piece of code we handle WRITES. WRITES must be handled on a flank, 
+because in the presence of unstable inputs we only want to write once, when
+the values have reached stability.
+
+*/
+
+if (!stall[0] &amp;&amp; (MemRead || MemWrite)) {
+	// decode address into above three parts. Only considers first 9 bits of Address.
+	2 bit bo = Address;
+	4 bit ix = Address &gt;&gt; 2;
+	3 bit tg = Address &gt;&gt; 6;
+
+	// read data
+	0d68 bit VTagData = VTagDatas[ix];
+	0d64 bit Data = VTagData;
+    0d3  bit Tag  = VTagData &gt;&gt; 0d64;
+	0d1  bit v    = VTagData &gt;&gt; 0d67;
+
+	if (v &amp;&amp; Tag == tg) {
+		// cache hit
+
+		// the shift amount to get to block bo is 16*bo
+		0d16 bit boshift = ((0d16 bit)bo) &lt;&lt; 4;
+
+		if (MemRead) {
+			// output relevant part of block
+			ReadData = Data &gt;&gt; boshift;
+		}
+		if (MemWrite) {
+			0d16 bit OldData = Data &gt;&gt; boshift;
+
+			if (WriteData != OldData) {
+				// overwrite relevant part of block
+				VTagDatas[ix] = 	
+					(VTagData &amp;~ ((0d68 bit)0xFFFF &lt;&lt; boshift)) |
+					((0d68 bit)WriteData &lt;&lt; boshift);
+				// write-through
+				MMAddress = Address;
+				MMWriteData = WriteData;
+				MMMemWrite = 1;
+			}
+		}
+	} else {
+		// cache miss
+		CacheReady = 0;
+		stall[0] = 7; // stall[0] is 3 bits, highest amount is 7
+
+
+		// forward request to main memory
+		MMAddress = Address; 
+		MMMemRead = 1;
+	
+		// if we're writing, send data to main memory immediately
+		if (MemWrite) {
+			MMWriteData = WriteData;
+			MMMemWrite = 1;
+		}
+	}
+}</ACTION>
+        <ACTION EVENT="CLOCK_RISING">{
+	MMMemRead = 0;
+	MMMemWrite = 0;
+
+	if (stall[0]) {
+		--stall[0];
+
+		if (!stall[0]) {
+			// A memory read just completed
+			CacheReady = 1;
+
+			2 bit bo   = Address;
+			4 bit addr = Address &gt;&gt; 2;
+			3 bit tag  = Address &gt;&gt; 6;
+
+			VTagDatas[addr] = (0d68 bit)1    &lt;&lt; 0d67 |
+							  (0d68 bit)tag  &lt;&lt; 0d64 |
+				 			  MMReadData;
+			ReadData = MMReadData &gt;&gt; (((16 bit)bo) &lt;&lt; 4);
+		}
+	}
+}</ACTION>
+        <ACTION EVENT="INIT">{
+	for (5 bit i = 0; i &lt; 0d16; i++) {
+		VTagDatas[i] = 0;
+	}
+	stall[0] = 0;
+	MMMemWrite = 0;
+	MMMemRead = 0;
+}</ACTION>
+        <ACTION EVENT="INPUT_CHANGE">/* Direct mapped write-through cache 
+================================================================================
+The Harvard processor uses a 512 word memory. Hence each address is 9 bits 
+wide. This cache uses 4 word data blocks, thus our block offset eats 2 bits. 
+This cache has 16 blocks; we use 4 bits for the index. In total, 3 bits remain 
+for the tag. In summary, a memory address is divided in these three parts:
+	Tag (3 bit) | Index (4 bit)  |  Block Offset (2 bit)
+
+In this piece of code we handle READ requests. We ASSUME a cache hit. 
+It is important to handle reads in INPUT_CHANGE so that reads wich hit the cache 
+finish (way) BEFORE the downward flank (that is, when the register file writes)
+
+*/
+
+if (stall[0] == 0 &amp;&amp; MemRead) {
+	// decode address into above three parts. Only considers first 9 bits of Address.
+	2 bit bo = Address;
+	4 bit ix = Address &gt;&gt; 2;
+	3 bit tg = Address &gt;&gt; 6;
+
+	// get associated cache block
+	0d68 bit VTagData = VTagDatas[ix];
+	0d64 bit Data = VTagData;
+	0d3  bit Tag  = VTagData &gt;&gt; 0d64;
+	0d1  bit v    = VTagData &gt;&gt; 0d67;
+
+	// the shift amount to get word bo from the 4 word block is 16*bo
+	0d16 bit boshift = ((0d16 bit)bo) &lt;&lt; 4;
+
+	// output relevant part of 4 word block
+	ReadData = Data &gt;&gt; boshift;
+}</ACTION>
+    </INTERNALS>
+</SIMPLE>

@@ -1,0 +1,108 @@
+# Author: Wouter Koolen-Wijkstra & Ben Bruidegom
+# This file contains the Harvard assembler instruction format definition
+# this concerns partial syntax and full semantics
+
+
+# first: machine information for the compiler
+
+.processor HARVARD
+.setting targetMemory = "16 bit Harvard machine direct mapped cache.Instruction Memory:Memory"
+.autocast {
+	number -> address
+	number -> label
+}
+
+
+# second: the register constants
+.constant {
+   $0   =	0x0/register
+   $1   = 	0x1/register 
+   $2   = 	0x2 /register
+   $3   = 	0x3 /register
+   $4   = 	0x4 /register
+   $5   = 	0x5 /register
+   $6   = 	0x6 /register
+   $7   = 	0x7 /register
+   $8   = 	0x8 /register
+   $9   = 	0x9 /register
+   $10  = 	0xA /register
+   $11  =  	0xB /register
+   $12  =  	0xC /register
+   $13  =  	0xD /register
+   $14  =  	0xE /register
+   $15  =  	0xF /register
+}
+
+
+.highlight {
+	# hack to highlight the first instruction on the START of the first
+	# cycle already. We normally highlight instructions on the END of their
+	# cycle. This one is roze
+	[ "16 bit Harvard machine direct mapped cache.Instruction Memory" | "0xFFFF-(Address==0xFFFF)*Address" | "#c8c8ff"]
+	# and this one is turquoise
+	[ "16 bit Harvard machine direct mapped cache.Instruction Memory" | "Address" | "#bbE0E0"]
+}
+
+
+# third: instruction format and instruction definitions
+
+.opcodepartition {
+	DEFAULT = [OP:0d7, ALU:0d3, RS:0d4, RT:0d4, RD: 0d4, IMM:0d16]
+	JUMP =    [OP:0d7, ALU:0d3, RS:0d4, RT:0d4, RD: 0d4, OFFS:0d16]
+}
+
+
+.instructionformat   ARITH1 = [DEFAULT | rd:0d4/register, rt:0d4/register]
+.instructiondefinition COPY =	[ARITH1	| " OP = 0b0000011; ALU = 0x0; RS = 0; RT = rt; RD = rd; IMM = 0;"]
+
+.instructionformat   ARITH2 = [DEFAULT | rd:0d4/register, rs:0d4/register, rt:0d4/register]
+.instructiondefinition ADD =	[ARITH2	| " OP = 0b0000011; ALU = 0x0; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition SUB =	[ARITH2	| " OP = 0b0000011; ALU = 0x1; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition AND= 	[ARITH2	| " OP = 0b0000011; ALU = 0x2; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition OR =	[ARITH2	| " OP = 0b0000011; ALU = 0x3; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition XOR =	[ARITH2	| " OP = 0b0000011; ALU = 0x4; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition SHL =	[ARITH2	| " OP = 0b0000011; ALU = 0x5; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition SHR =	[ARITH2	| " OP = 0b0000011; ALU = 0x6; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+
+.instructionformat   ARITHI1 = [DEFAULT | rd:0d4/register, imm:0d16/number]
+.instructiondefinition LOADI =	[ARITHI1 |	" OP = 0b0000001; ALU = 0x7; RS = 0; RT = 0; RD = rd; IMM = imm;"]
+
+.instructionformat   ARITHI2 = [DEFAULT | rd:0d4/register, rs:0d4/register, imm:0d16/number]
+.instructiondefinition ADDI =	[ARITHI2| " OP = 0b0000010; ALU = 0x0; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition SUBI =	[ARITHI2| " OP = 0b0000010; ALU = 0x1; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition ANDI =	[ARITHI2| " OP = 0b0000010; ALU = 0x2; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition ORI =	[ARITHI2| " OP = 0b0000010; ALU = 0x3; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition XORI =	[ARITHI2| " OP = 0b0000010; ALU = 0x4; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition SHLI =	[ARITHI2| " OP = 0b0000010; ALU = 0x5; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition SHRI =	[ARITHI2| " OP = 0b0000010; ALU = 0x6; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+
+.instructionformat   HALT = [JUMP|]
+.instructiondefinition HALT =	[HALT| "OP=0b0001001; ALU = 0x1; RS = 0; RT = 0; RD = 0; OFFS = 0;"]
+
+.instructionformat   BRANCH0 = [JUMP | offs:0d16/label]
+.instructiondefinition BRA =	[BRANCH0| "OP=0b0001001; ALU = 0x1; RS = 0; RT = 0; RD = 0; OFFS = offs-self;"]
+
+.instructionformat   BRANCH1 = [JUMP | rt:0d4/register, offs:0d16/label]
+.instructiondefinition BZ =	[BRANCH1| "OP=0b0001001; ALU = 0x7; RS = 0; RT = rt; RD = 0; OFFS = offs-self;"]
+.instructiondefinition BNZ =	[BRANCH1| "OP=0b0001101; ALU = 0x7; RS = 0; RT = rt; RD = 0; OFFS = offs-self;"]
+
+.instructionformat   BRANCH2 = [JUMP | rs:0d4/register, rt:0d4/register, offs:0d16/label]
+.instructiondefinition BEQ =	[BRANCH2| "OP=0b0001001; ALU = 0x1;  RS = rs; RT = rt; RD = 0; OFFS = offs-self;"]
+.instructiondefinition BNE =	[BRANCH2| "OP=0b0001101; ALU = 0x7;  RS = rs; RT = rt; RD = 0; OFFS = offs-self;"]
+
+.instructionformat   LOADSTORE = [JUMP | rd:0d4/register, offs:0d16/address, rs:0d4/register]
+.instructiondefinition LW 	=	[LOADSTORE |	 "OP=0b1010010; ALU=0x1; RS = rs; RT = 0; RD = rd; OFFS = offs;"]
+.instructiondefinition SW 	=	[LOADSTORE |	 "OP=0b0100000; ALU=0x1; RS = rs; RT = rd; RD = 0; OFFS = offs;"]
+
+
+
+.memory DATAMEM
+.setting targetMemory = "16 bit Harvard machine direct mapped cache.MM:Memory"
+
+
+.memory REGISTERS
+.setting { 
+	targetMemory = "16 bit Harvard machine direct mapped cache.Registers:Registers"
+	addressType = register
+}
+

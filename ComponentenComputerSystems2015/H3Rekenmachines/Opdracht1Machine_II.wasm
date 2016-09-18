@@ -1,0 +1,9 @@
+# Rekenmachine_II WASM demo program #-teken is commentaar
+@include "Rekenmachine_II.wasm" # Deze regel altijd toevoegen 
+
+.code MyCode : REKENMACHINE_II 
+LOADI $1, 0x3000  	# Laad 3000hex in register 1
+LOADI $2, 0x2000  	# Laad 2000hex in register 2
+SUB $3, $1, $2	
+ADDI $4, $3, 0x200	
+

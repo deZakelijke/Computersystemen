@@ -1,0 +1,17 @@
+@include "CalculatorWithLoops.wasm"
+# Compare 2 values stored in registers a & b  
+# if a > b, restore them in ascending order.
+
+.code MyRegisters  : REGISTERS
+0x1: WORD a 15
+0x2: WORD b 13
+0x3: WORD a_min_b 
+0x4: WORD temp
+
+.code MyCode  : LOOPS_MACHINE, MyRegisters
+
+#Your code
+
+end: HALT
+
+

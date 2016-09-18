@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="Instruction Memory_II" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <RECTANGLE COLOR="#333333" POSX="-40.0" POSY="-60.0"
+            WIDTH="90.0" HEIGHT="160.0" RADIUSX="10.0" RADIUSY="10.0">
+            <STROKE LINEWIDTH="2.0"/>
+        </RECTANGLE>
+        <TEXT POSX="5.0" POSY="-15.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Serif,plain,14.0">Instruction
+Memory
+
+(IM)</TEXT>
+        <TEXT POSX="35.0" POSY="5.0" HALIGN="CENTER" VALIGN="BOTTOM"
+            COLOR="#000000" FONT="Serif,plain,13.0">Data</TEXT>
+        <TEXT POSX="-15.0" POSY="5.0" HALIGN="CENTER" VALIGN="BOTTOM"
+            COLOR="#000000" FONT="Serif,plain,13.0">Address</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="16" SIGNED="false" POSX="-40.0" POSY="0.0" NAME="Address">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="32" SIGNED="false" POSX="50.0" POSY="0.0" NAME="Data">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <MEMORY>
+        <STORAGE NAME="Memory" SIZE="300" BITS="32" SIGNED="false"/>
+    </MEMORY>
+    <INTERNALS DELAY="10">
+        <ACTION EVENT="INPUT_CHANGE">
+			// Indexering per word (niet per byte)
+// Voorkom out-of-bound exception door alleen te werken bij correcte input
+
+if (Address &lt; 0d300) Data = Memory[Address];
+		</ACTION>
+    </INTERNALS>
+</SIMPLE>

@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="Registers" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="100">
+    <PARAMETERS/>
+    <FORMS>
+        <TEXT POSX="45.0" POSY="10.0" HALIGN="RIGHT" VALIGN="CENTER"
+            COLOR="#FF0000" FONT="Dialog,plain,12.0">
+			Second register
+		</TEXT>
+        <TEXT POSX="5.0" POSY="-47.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#FF0033" FONT="Dialog,plain,12.0">
+			First register
+		</TEXT>
+        <TEXT POSX="0.0" POSY="55.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#FF0000" FONT="Dialog,plain,12.0"> Destination reg.	</TEXT>
+        <RECTANGLE COLOR="#333333" POSX="-50.0" POSY="-80.0"
+            WIDTH="110.0" HEIGHT="190.0" RADIUSX="15.0" RADIUSY="15.0">
+            <STROKE LINEWIDTH="2.0"/>
+        </RECTANGLE>
+        <TEXT POSX="0.0" POSY="-70.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Serif,plain,16.0">Registers</TEXT>
+        <LINE COLOR="#000000" FROMX="0" FROMY="104" TOX="-6" TOY="110">
+            <STROKE/>
+        </LINE>
+        <LINE COLOR="#000000" FROMX="0" FROMY="104" TOX="6" TOY="110">
+            <STROKE/>
+        </LINE>
+        <ELLIPSE COLOR="#000000" POSX="0.0" POSY="114.0" RADIUSX="3.0" RADIUSY="3.0">
+            <STROKE/>
+        </ELLIPSE>
+        <LINE COLOR="#CC0000" FROMX="0" FROMY="118" TOX="0" TOY="120">
+            <STROKE/>
+        </LINE>
+        <TEXT POSX="-25.0" POSY="35.0" HALIGN="CENTER" VALIGN="BOTTOM"
+            COLOR="#000000" FONT="Serif,plain,13.0">Address</TEXT>
+        <TEXT POSX="-25.0" POSY="-25.0" HALIGN="CENTER" VALIGN="BOTTOM"
+            COLOR="#000000" FONT="Serif,plain,13.0">Address</TEXT>
+        <TEXT POSX="-25.0" POSY="75.0" HALIGN="CENTER" VALIGN="BOTTOM"
+            COLOR="#000000" FONT="Serif,plain,13.0">Address</TEXT>
+        <TEXT POSX="30.0" POSY="-25.0" HALIGN="LEFT" VALIGN="BOTTOM"
+            COLOR="#000000" FONT="Serif,plain,13.0">Data</TEXT>
+        <TEXT POSX="30.0" POSY="35.0" HALIGN="LEFT" VALIGN="BOTTOM"
+            COLOR="#000000" FONT="Serif,plain,13.0">Data</TEXT>
+        <TEXT POSX="-30.0" POSY="95.0" HALIGN="CENTER" VALIGN="BOTTOM"
+            COLOR="#000000" FONT="Serif,plain,13.0">Data</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="4" SIGNED="false" POSX="-50.0" POSY="-30.0" NAME="Read0">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="4" SIGNED="false" POSX="-50.0" POSY="30.0" NAME="Read1">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="4" SIGNED="false" POSX="-50.0" POSY="70.0" NAME="WriteReg">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="16" SIGNED="false" POSX="-50.0" POSY="90.0" NAME="WriteData">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="16" SIGNED="false" POSX="60.0" POSY="-30.0" NAME="Reg0">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="16" SIGNED="false" POSX="60.0" POSY="30.0" NAME="Reg1">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="0.0" POSY="120.0" NAME="CLK">
+            <LABEL POSX="-10.0" POSY="10.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+    </IO>
+    <MEMORY>
+        <STORAGE NAME="LastCLK" SIZE="1" BITS="1" SIGNED="false"/>
+        <STORAGE NAME="Registers" SIZE="16" BITS="16" SIGNED="false"/>
+    </MEMORY>
+    <INTERNALS DELAY="3">
+        <ACTION EVENT="INPUT_CHANGE">
+		{  
+			Reg0 = Registers[Read0];
+			Reg1 = Registers[Read1];	
+		//if (RegWrite)
+		if (LastCLK[0] &amp;&amp; !CLK)  // neg edge
+			{
+				Registers[WriteReg] = WriteData;
+				if (WriteReg == Read0) Reg0 = WriteData;
+				if (WriteReg == Read1) Reg1 = WriteData;						
+			}
+		LastCLK[0] = CLK;
+		}
+		</ACTION>
+    </INTERNALS>
+</SIMPLE>

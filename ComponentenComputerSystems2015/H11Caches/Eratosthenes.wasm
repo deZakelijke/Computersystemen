@@ -1,0 +1,57 @@
+@include "16bitCached.wasm"
+
+.data MyData : REGISTERS
+0x1:	WORD a		0d5
+	WORD b		0d7
+	WORD stride
+	WORD tmp
+	WORD max	100
+	WORD maxstr	10
+	
+
+.code MyCode : HARVARD, MyData
+
+# initially set 'max' memory cells to one
+# that is, we consider them all primes
+MOVE	a, max
+LI	b, 1
+loop1:	SUBI 	a, a, 1	# start writing at 99
+	SW 	b, 0, a
+	BZ 	a, end1
+
+	BRA 	loop1
+end1:
+
+# now start looking for non-primes
+
+LI	stride, 2
+
+loop2:	SUB 	tmp, stride, maxstr
+	BZ 	tmp, end2
+
+	# check if stride is no prime
+	LW     tmp, 0, stride
+	BZ	tmp, end3
+
+	# start erasing ones from 2*stride
+	ADD 	a, stride, stride
+	LI	b, 0
+	loop3:	# is a >= max?
+		SUB	tmp, a, max
+		ANDI	tmp, tmp, 0x8000
+		BZ	tmp, end3
+
+		SW	b, 0, a
+		ADD	a, a, stride
+
+		BRA loop3
+	end3:
+
+	ADDI	stride, stride, 1
+
+	BRA loop2
+
+end2:
+
+
+HALT

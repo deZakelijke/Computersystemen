@@ -1,0 +1,77 @@
+@include "16bitJumper.wasm"
+
+# computes fib(n) where
+# fib(0) = 0
+# fib(1) = 1
+# fib(n+2) = fib(n+1) + fib(n)
+#
+# An initial segment of the sequence:
+# (http://www.research.att.com/projects/OEIS?Anum=A000045)
+# 0,1,1,2,3,5,8,13,21,34,55,89,144,233,377,610,987,1597,2584,
+# 4181,6765,10946,17711,28657,46368,75025,121393,196418,
+# 317811,514229,832040,1346269,2178309,3524578,5702887,
+# 9227465,14930352,24157817,39088169
+#
+#
+# Exercise for the reader:
+# Modify this program so that it stores intermediate results in
+# the data memory. This reduces the time consumption of this algorithm
+# from exponential to linear time.
+
+
+
+
+
+.data MyData : REGISTERS
+@include "register_constants.wasm"
+
+
+.code MyCode : REGSTACK, MyData
+
+# this is the main program
+
+
+LI 	$a0, 6		# fib expects n in the first parameter
+JAL 	fib		# call fib 
+HALT			# endless loop
+
+
+#------------- FIBONACCI PROCEDURE -------------
+fib:			# fibonacci numbers procedure
+
+
+MOVE	$v0, $a0		# copy to result for convenience
+JRZ 	$a0, $ra		# f(0) = 0 by definition
+
+
+SUBI 	$a0, $a0, 1	# replace n by n-1
+JRZ 	$a0, $ra		# f(1) = 1 by definition
+
+SUBI	$sp, $sp, 2
+SW	$ra, 1, $sp
+SW	$a0, 0, $sp	# store n-1 for later
+
+# compute fib(n-1) ( $a0 contains n-1 already)
+
+JAL 	fib	# afterward $v0 contains fib(n-1)
+
+# now fib(n-1) is in $v0
+
+LW	$a0, 0, $sp	# retrieve n-1
+SW	$v0, 0, $sp	# and replace it by f(n-1)
+
+SUBI 	$a0, $a0, 1	# compute n-2
+
+# compute fib(n-2) ($a0 contains n-2 now)
+JAL 	fib		# afterward $v0 contains fib(n-2)
+
+LW	$t0, 0, $sp	# retrieve fib(n-1)
+
+ADD 	$v0, $v0, $t0	# compute fib(n-1) + fib(n-2)
+
+LW	$ra, 1, $sp	# restore return address
+ADDI	$sp, $sp, 2	# restore stack pointer
+
+
+# return value is in $v0
+JR 	$ra

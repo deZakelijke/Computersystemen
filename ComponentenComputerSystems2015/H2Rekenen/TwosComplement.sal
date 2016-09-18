@@ -1,0 +1,4 @@
+0: SUB_ADD=0; A=0x5; B=0x7;
+10: SUB_ADD=1; A=0x5; B=0x7;
+20: SUB_ADD=1; A=0d5; B=0d10;
+30: SUB_ADD=1; A=0b101; B=0b1111;

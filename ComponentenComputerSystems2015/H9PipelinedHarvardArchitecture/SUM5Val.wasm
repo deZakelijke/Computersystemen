@@ -1,0 +1,24 @@
+@include "PipelinedHarvard.wasm"
+
+.data MyMemory : DATAMEM 
+0x02 : 	WORD start		0x6
+       	WORD 		0x7
+       	WORD 		0x8
+       	WORD 		0x9
+       	WORD 		0d10
+
+.code MyCode  : HARVARD, MyMemory
+	LOADI $6, 0	#start at 0
+	LOADI $0, 0	#clear $0
+	LOADI $5, 5	#5 values
+
+loop:	LW $1, start, $6
+	ADDI $6, $6, 1
+	NOP
+	ADD $0, $0, $1
+	BNE $6, $5, loop
+
+	NOP
+end:	SW $0, start, $6
+HALT
+

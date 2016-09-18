@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="ALUOpcode" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <LINE COLOR="#FF0000" FROMX="160" FROMY="10" TOX="200" TOY="10">
+            <STROKE LINEWIDTH="1.5"/>
+        </LINE>
+    </FORMS>
+    <IO>
+        <INPUT BITS="3" SIGNED="false" POSX="160.0" POSY="10.0" NAME="S">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="200.0" POSY="10.0" NAME="S0">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="190.0" POSY="10.0" NAME="S1">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="180.0" POSY="10.0" NAME="S2">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <MEMORY/>
+    <INTERNALS DELAY="1">
+        <ACTION EVENT="INPUT_CHANGE">{
+S0 = S;
+S1 = S &gt;&gt; 0d1;
+S2 = S &gt;&gt; 0d2;
+}</ACTION>
+    </INTERNALS>
+</SIMPLE>

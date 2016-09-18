@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="Multiplexor" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <POLYGON COLOR="#000000">
+            <STROKE LINEWIDTH="2.0"/>
+            <POINT POSX="-10.0" POSY="-7.0"/>
+            <POINT POSX="15.0" POSY="-25.0"/>
+            <POINT POSX="15.0" POSY="25.0"/>
+            <POINT POSX="-10.0" POSY="7.0"/>
+            <POINT POSX="-10.0" POSY="-7.0"/>
+        </POLYGON>
+        <TEXT POSX="3.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Dialog,plain,12.0">Mux</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="16" SIGNED="false" POSX="15.0" POSY="-10.0" NAME="In0">
+            <LABEL POSX="20.0" POSY="-10.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="16" SIGNED="false" POSX="15.0" POSY="0.0" NAME="In1">
+            <LABEL POSX="20.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="2" SIGNED="false" POSX="0.0" POSY="-15.0" NAME="Switch">
+            <LABEL POSX="-10.0" POSY="-10.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="16" SIGNED="false" POSX="15.0" POSY="10.0" NAME="In2">
+            <LABEL POSX="20.0" POSY="10.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="16" SIGNED="false" POSX="-10.0" POSY="0.0" NAME="Out">
+            <LABEL POSX="-30.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <MEMORY/>
+    <INTERNALS DELAY="1">
+        <ACTION EVENT="INPUT_CHANGE">if (Switch == 0) 		Out = In0;
+else if (Switch == 1) 	Out = In1;
+else					Out = In2;
+		</ACTION>
+    </INTERNALS>
+</SIMPLE>

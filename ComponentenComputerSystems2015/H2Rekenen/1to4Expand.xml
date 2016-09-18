@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="1to4Expand" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <LINE COLOR="#000000" FROMX="90" FROMY="40" TOX="100" TOY="40">
+            <STROKE/>
+        </LINE>
+        <LINE COLOR="#000000" FROMX="90" FROMY="60" TOX="100" TOY="60">
+            <STROKE/>
+        </LINE>
+        <LINE COLOR="#000000" FROMX="90" FROMY="80" TOX="100" TOY="80">
+            <STROKE/>
+        </LINE>
+        <LINE COLOR="#000000" FROMX="90" FROMY="100" TOX="100" TOY="100">
+            <STROKE/>
+        </LINE>
+        <LINE COLOR="#000000" FROMX="90" FROMY="40" TOX="90" TOY="100">
+            <STROKE LINEWIDTH="2.0"/>
+        </LINE>
+        <LINE COLOR="#000000" FROMX="80" FROMY="100" TOX="90" TOY="100">
+            <STROKE LINEWIDTH="3.0"/>
+        </LINE>
+    </FORMS>
+    <IO>
+        <INPUT BITS="4" SIGNED="false" POSX="80.0" POSY="100.0" NAME="A">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="100.0" POSY="100.0" NAME="a3">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="100.0" POSY="80.0" NAME="a2">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="100.0" POSY="60.0" NAME="a1">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="100.0" POSY="40.0" NAME="a0">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <MEMORY/>
+    <INTERNALS DELAY="1">
+        <ACTION EVENT="INPUT_CHANGE">{
+ a0 = A;
+ a1 = A &gt;&gt; 0d1;
+ a2 = A &gt;&gt; 0d2;
+ a3 = A &gt;&gt; 0d3;
+}</ACTION>
+    </INTERNALS>
+</SIMPLE>

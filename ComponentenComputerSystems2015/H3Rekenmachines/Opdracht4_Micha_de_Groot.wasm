@@ -1,0 +1,22 @@
+# Bitmanipulatie met masking en shifting
+# Voorbeeld: converteer 0xABCD naar 0xDCAB
+
+@include "Rekenmachine_II.wasm" 
+
+.code MyCode : REKENMACHINE_II 
+LOADI $1, 0xABCD  	
+SHLI $2, $1, 0d12  	# D000 <-- ABCD << 12
+ANDI $3, $1, 0x00F0	# 00C0 <-- ABCD & 00F0
+SHLI $3, $3, 0d4	# 0C00 <-- 00C0 << 4
+OR $2, $2, $3	# DC00 <-- D000 | 0C00
+ANDI $3, $1, 0x0F00	# 0B00 <-- ABCD & 0F00
+SHRI $3, $3, 0d4	# 00B0 <-- 0B00 >> 4
+OR $2, $2, $3	# DCBO <-- DC00 | 00B0
+ANDI $3, $1, 0xF000	# A000 <-- ABCD & F000
+SHRI $3, $3, 0d12	# 000A <-- A000 >> 12
+ANDI $3, $3, 0x000F	# 000A <-- 000A & 000F
+OR $2, $2, $3	# DCBA <-- DCB0 | 000A
+COPY $1, $2	# DCBA <-- ABCD c DCBA
+
+# Made by Micha de Groot, 10434410
+# september 2016

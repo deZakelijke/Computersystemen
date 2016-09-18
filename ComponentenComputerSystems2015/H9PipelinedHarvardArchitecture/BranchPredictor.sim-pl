@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="BranchPredictor" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <RECTANGLE COLOR="#000000" POSX="250.0" POSY="120.0"
+            WIDTH="120.0" HEIGHT="40.0" RADIUSX="10.0" RADIUSY="10.0">
+            <STROKE LINEWIDTH="2.0"/>
+        </RECTANGLE>
+        <TEXT POSX="310.0" POSY="140.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="SansSerif,plain,14.0">Branch Predictor</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="16" SIGNED="false" POSX="250.0" POSY="140.0" NAME="ReadAddress">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="370.0" POSY="140.0" NAME="Prediction">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <INPUT BITS="16" SIGNED="false" POSX="270.0" POSY="120.0" NAME="WriteAddress">
+            <LABEL POSX="0.0" POSY="-10.0" HALIGN="CENTER" VALIGN="BOTTOM"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="310.0" POSY="120.0" NAME="IsJump">
+            <LABEL POSX="0.0" POSY="-10.0" HALIGN="CENTER" VALIGN="BOTTOM"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="350.0" POSY="120.0" NAME="IsTaken">
+            <LABEL POSX="0.0" POSY="-10.0" HALIGN="CENTER" VALIGN="BOTTOM"/>
+        </INPUT>
+    </IO>
+    <MEMORY>
+        <STORAGE NAME="P" SIZE="16" BITS="2" SIGNED="false"/>
+    </MEMORY>
+    <INTERNALS DELAY="1">
+        <ACTION EVENT="INPUT_CHANGE">/*
+
+Four states:
+00    Predict taken (taken more than once)
+01    Predict taken
+10    Predict not taken
+11    Predict not taken (not taken more than once)
+
+*/
+
+
+Prediction = !(P[ReadAddress &amp; 0xF] &gt;&gt; 1);</ACTION>
+        <ACTION EVENT="CLOCK_FALLING">if (IsJump) {
+	if (IsTaken) {
+		if (P[WriteAddress &amp; 0xF] != 0b00) {
+			--P[WriteAddress &amp; 0xF];
+		}
+	} else {
+		if (P[WriteAddress &amp; 0xF] != 0b11) {
+			++P[WriteAddress &amp; 0xF];
+		}
+	}
+}</ACTION>
+    </INTERNALS>
+</SIMPLE>

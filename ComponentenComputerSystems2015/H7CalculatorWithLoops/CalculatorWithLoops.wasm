@@ -1,0 +1,136 @@
+# This file contains the Calculator With Loops assembler instruction format definition
+# this concerns partial syntax and full semantics
+#
+# Original author: Wouter Koolen-Wijkstra 
+# Modified 1-08-2013 by Ben Bruidegom to
+# - restrict ALU operations to ADD, SUB, AND, OR, XOR, SHL, SHR, COPY
+# - Branch instructions BEQ, BNE, BZ, BNZ, BA, HALT
+# - rearrange opcode bits to be a proper extension of the Calculator.
+# first: machine information for the compiler
+
+.processor LOOPS_MACHINE
+.setting targetMemory = "Calculator With Loops.Instruction Memory:Memory"
+.autocast {
+	number -> address
+	number -> label
+}
+
+
+# second: the register constants
+.constant {
+   $0   =	0x0/register
+   $1   = 	0x1/register 
+   $2   = 	0x2 /register
+   $3   = 	0x3 /register
+   $4   = 	0x4 /register
+   $5   = 	0x5 /register
+   $6   = 	0x6 /register
+   $7   = 	0x7 /register
+   $8   = 	0x8 /register
+   $9   = 	0x9 /register
+   $10  = 	0xA /register
+   $11  =  	0xB /register
+   $12  =  	0xC /register
+   $13  =  	0xD /register
+   $14  =  	0xE /register
+   $15  =  	0xF /register
+}
+
+
+.highlight {
+	# hack to highlight the first instruction on the START of the first
+	# cycle already. We normally highlight instructions on the END of their
+	# cycle. This one is roze
+	[ "Calculator With Loops.Instruction Memory" | "0xFFFF-(Address==0xFFFF)*Address" | "#c8c8ff"]
+	# and this one is turquoise
+	[ "Calculator With Loops.Instruction Memory" | "Address" | "#bbE0E0"]
+}
+
+
+# third: instruction format and instruction definitions
+
+.opcodepartition {
+	
+	DEFAULT = [ \
+		Branch:0d1, \
+		Invert:0d1, \
+		RegWrite:0d1, \
+		SecReg:0d1, \
+		ALU:0d3, \
+		RS:0d4, \
+		RT:0d4, \
+		RD: 0d4, \
+		IMM:0d16]
+
+	# the JUMP opcode partition only differs from the 
+	# DEFAULT in the naming of the last field.
+
+	JUMP = [ \
+		Branch:0d1, \
+		Invert:0d1, \
+		RegWrite:0d1, \
+		SecReg:0d1, \
+		ALU:0d3, \
+		RS:0d4, \
+		RT:0d4, \
+		RD: 0d4, \
+		OFFS:0d16]
+}
+
+
+# The ALU opcodes are
+# 000 : ADD
+# 001 : SUB
+# 010 : AND
+# 011 : OR
+# 100 : XOR
+# 101 : SHL
+# 110 : SHR
+# 111 : COPY
+
+
+.instructionformat   ARITH1 = [DEFAULT | rd:0d4/register, rt:0d4/register]
+.instructiondefinition COPY =	[ARITH1	| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 1; ALU = 0b111; RS = 0; RT = rt; RD = rd; IMM = 0;"]
+
+.instructionformat   ARITH2 = [DEFAULT | rd:0d4/register, rs:0d4/register, rt:0d4/register]
+.instructiondefinition ADD =	[ARITH2	| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 1; ALU = 0b000; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition SUB =	[ARITH2	| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 1; ALU = 0b001; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition AND = 	[ARITH2	| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 1; ALU = 0b010; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition OR =	[ARITH2	| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 1; ALU = 0b011; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition XOR = 	[ARITH2	| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 1; ALU = 0b100; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition SHL =	[ARITH2	| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 1; ALU = 0b101; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition SHR = 	[ARITH2	| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 1; ALU = 0b110; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+
+.instructionformat   ARITHI1 = [DEFAULT | rd:0d4/register, imm:0d16/number]
+.instructiondefinition LOADI =	[ARITHI1 |" Branch = 0; Invert = 0; RegWrite = 1; SecReg = 0; ALU = 0b111; RS = 0; RT = 0; RD = rd; IMM = imm;"]
+
+.instructionformat   ARITHI2 = [DEFAULT | rd:0d4/register, rs:0d4/register, imm:0d16/number]
+.instructiondefinition ADDI =	[ARITHI2| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 0; ALU = 0b000; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition SUBI =	[ARITHI2| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 0; ALU = 0b001; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition ANDI =	[ARITHI2| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 0; ALU = 0b010; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition ORI =	[ARITHI2| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 0; ALU = 0b011; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition XORI =	[ARITHI2| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 0; ALU = 0b100; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition SHLI =	[ARITHI2| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 0; ALU = 0b101; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition SHRI =	[ARITHI2| " Branch = 0; Invert = 0; RegWrite = 1; SecReg = 0; ALU = 0b110; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+
+.instructionformat   HALT = [JUMP|]
+.instructiondefinition HALT =	[HALT| "Branch = 1; Invert = 0; RegWrite = 0; SecReg = 1; ALU = 0b001; RS = 0; RT = 0; RD = 0; OFFS = 0;"]
+
+
+.instructionformat   BRANCH0 = [JUMP | offs:0d16/label]
+.instructiondefinition BRA =	[BRANCH0| "Branch = 1; Invert = 0; RegWrite = 0; SecReg = 1; ALU = 0b001; RS = 0; RT = 0; RD = 0; OFFS = offs-self;"]
+
+.instructionformat   BRANCH1 = [JUMP | rt:0d4/register, offs:0d16/label]
+.instructiondefinition BZ =	[BRANCH1| "Branch = 1; Invert = 0; RegWrite = 0; SecReg = 1; ALU = 0b111; RS = 0; RT = rt; RD = 0; OFFS = offs-self;"]
+.instructiondefinition BNZ =	[BRANCH1| "Branch = 1; Invert = 1; RegWrite = 0; SecReg = 1; ALU = 0b111; RS = 0; RT = rt; RD = 0; OFFS = offs-self;"]
+
+.instructionformat   BRANCH2 = [JUMP | rs:0d4/register, rt:0d4/register, offs:0d16/label]
+.instructiondefinition BEQ =	[BRANCH2| "Branch = 1; Invert = 0; RegWrite = 0; SecReg = 1; ALU = 0b001;  RS = rs; RT = rt; RD = 0; OFFS = offs-self;"]
+.instructiondefinition BNE =	[BRANCH2| "Branch = 1; Invert = 1; RegWrite = 0; SecReg = 1; ALU = 0b001;  RS = rs; RT = rt; RD = 0; OFFS = offs-self;"]
+
+.memory REGISTERS
+.setting { 
+	targetMemory = "Calculator With Loops.Registers:Registers"
+	addressType = register
+}
+

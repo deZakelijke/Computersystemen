@@ -1,0 +1,26 @@
+@include "16bitHarvard.wasm"
+# Add 5 values stored in memory locations 2..6 and store the result in
+# the first free location(7)
+
+# Store 0d10 in address 0d5, 0d11 in address 0d6, etc.
+.data MyData : DATAMEM
+0x2: 	WORD start 0x6
+       	WORD       0x7
+	WORD       0x8
+       	WORD       0x9
+	WORD       0d10
+
+
+.code MyCode  : HARVARD, MyData
+     LOADI $5, 5      # 5 getallen
+     LOADI $6, 0      # Start at element 0
+     LOADI $0, 0      # Clear tussenresultaat
+
+loop:	LW $1, start, $6    # haalt getal uit geheugen
+	ADD $0, $0, $1   # telt getal op bij tussenresultaat
+	ADDI $6, $6, 1   # volgende getal en volgende adres 
+	BNE $6, $5, loop  # nog geen 3 getallen opgeteld? anders klaar 
+
+	SW $0, start, $6        # resultaat naar volgende adres
+HALT
+

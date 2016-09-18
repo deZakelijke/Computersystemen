@@ -1,0 +1,302 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>Instruction Format of Rekenmachine_II</title>
+<style type="text/css">div.segment             { text-align:center; font-size: x-large; font-weight: bold; }
+div.format              { text-align:center; font-size: large; font-weight: bold; padding-top: 1em;}
+table.instructionset    { overflow:visible; margin:auto; padding-bottom: 1em; }
+span.type               { font-style: italic; }
+span.mnemonic           { padding-right: 1em;}
+tr.fieldnames th        { border : 1px solid black; }
+tr.bitoffsets td.left   { border-left : 1px dotted gray; text-align: left;}
+tr.bitoffsets td.right  { border-right: 1px dotted gray; text-align: right}
+tr.bitoffsets td        { font-size: smaller; }
+tr.instructionfields td { border : 1px dotted gray; text-align: center; }
+tr.instructionfields th { text-align: left; font-weight: normal; padding-right: 2em; }</style>
+</head>
+<body>
+<h1>Instruction Format of Rekenmachine_II</h1>
+<div class="segment">Processor: REKENMACHINE_II</div>
+<div class="format">
+<span class="mnemonic">ARITH1</span> <span class="type">register</span> rd, <span class="type">register</span> rt</div>
+<table class="instructionset">
+<tr class="fieldnames">
+<td/>
+<th style="width: 1.5em;" colspan="2">OP<sub>1</sub>
+</th>
+<th style="width: 4.5em;" colspan="2">ALU<sub>3</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RS<sub>4</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RT<sub>4</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RD<sub>4</sub>
+</th>
+<th style="width: 24.0em;" colspan="2">IMM<sub>16</sub>
+</th>
+</tr>
+<tr class="bitoffsets">
+<th/>
+<td class="left">31</td>
+<td class="right">31</td>
+<td class="left">30</td>
+<td class="right">28</td>
+<td class="left">27</td>
+<td class="right">24</td>
+<td class="left">23</td>
+<td class="right">20</td>
+<td class="left">19</td>
+<td class="right">16</td>
+<td class="left">15</td>
+<td class="right">0</td>
+</tr>
+<tr class="instructionfields">
+<th>COPY</th>
+<td colspan="2">0b1</td>
+<td colspan="2">0b111</td>
+<td colspan="2">0</td>
+<td colspan="2">rt</td>
+<td colspan="2">rd</td>
+<td colspan="2">0</td>
+</tr>
+</table>
+<div class="format">
+<span class="mnemonic">ARITH2</span> <span class="type">register</span> rd, <span class="type">register</span> rs, <span class="type">register</span> rt</div>
+<table class="instructionset">
+<tr class="fieldnames">
+<td/>
+<th style="width: 1.5em;" colspan="2">OP<sub>1</sub>
+</th>
+<th style="width: 4.5em;" colspan="2">ALU<sub>3</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RS<sub>4</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RT<sub>4</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RD<sub>4</sub>
+</th>
+<th style="width: 24.0em;" colspan="2">IMM<sub>16</sub>
+</th>
+</tr>
+<tr class="bitoffsets">
+<th/>
+<td class="left">31</td>
+<td class="right">31</td>
+<td class="left">30</td>
+<td class="right">28</td>
+<td class="left">27</td>
+<td class="right">24</td>
+<td class="left">23</td>
+<td class="right">20</td>
+<td class="left">19</td>
+<td class="right">16</td>
+<td class="left">15</td>
+<td class="right">0</td>
+</tr>
+<tr class="instructionfields">
+<th>ADD</th>
+<td colspan="2">0b1</td>
+<td colspan="2">0b000</td>
+<td colspan="2">rs</td>
+<td colspan="2">rt</td>
+<td colspan="2">rd</td>
+<td colspan="2">0</td>
+</tr>
+<tr class="instructionfields">
+<th>AND</th>
+<td colspan="2">0b1</td>
+<td colspan="2">0b010</td>
+<td colspan="2">rs</td>
+<td colspan="2">rt</td>
+<td colspan="2">rd</td>
+<td colspan="2">0</td>
+</tr>
+<tr class="instructionfields">
+<th>OR</th>
+<td colspan="2">0b1</td>
+<td colspan="2">0b011</td>
+<td colspan="2">rs</td>
+<td colspan="2">rt</td>
+<td colspan="2">rd</td>
+<td colspan="2">0</td>
+</tr>
+<tr class="instructionfields">
+<th>SHL</th>
+<td colspan="2">0b1</td>
+<td colspan="2">0b101</td>
+<td colspan="2">rs</td>
+<td colspan="2">rt</td>
+<td colspan="2">rd</td>
+<td colspan="2">0</td>
+</tr>
+<tr class="instructionfields">
+<th>SHR</th>
+<td colspan="2">0b1</td>
+<td colspan="2">0b110</td>
+<td colspan="2">rs</td>
+<td colspan="2">rt</td>
+<td colspan="2">rd</td>
+<td colspan="2">0</td>
+</tr>
+<tr class="instructionfields">
+<th>SUB</th>
+<td colspan="2">0b1</td>
+<td colspan="2">0b001</td>
+<td colspan="2">rs</td>
+<td colspan="2">rt</td>
+<td colspan="2">rd</td>
+<td colspan="2">0</td>
+</tr>
+<tr class="instructionfields">
+<th>XOR</th>
+<td colspan="2">0b1</td>
+<td colspan="2">0b100</td>
+<td colspan="2">rs</td>
+<td colspan="2">rt</td>
+<td colspan="2">rd</td>
+<td colspan="2">0</td>
+</tr>
+</table>
+<div class="format">
+<span class="mnemonic">ARITHI1</span> <span class="type">register</span> rd, <span class="type">number</span> imm</div>
+<table class="instructionset">
+<tr class="fieldnames">
+<td/>
+<th style="width: 1.5em;" colspan="2">OP<sub>1</sub>
+</th>
+<th style="width: 4.5em;" colspan="2">ALU<sub>3</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RS<sub>4</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RT<sub>4</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RD<sub>4</sub>
+</th>
+<th style="width: 24.0em;" colspan="2">IMM<sub>16</sub>
+</th>
+</tr>
+<tr class="bitoffsets">
+<th/>
+<td class="left">31</td>
+<td class="right">31</td>
+<td class="left">30</td>
+<td class="right">28</td>
+<td class="left">27</td>
+<td class="right">24</td>
+<td class="left">23</td>
+<td class="right">20</td>
+<td class="left">19</td>
+<td class="right">16</td>
+<td class="left">15</td>
+<td class="right">0</td>
+</tr>
+<tr class="instructionfields">
+<th>LOADI</th>
+<td colspan="2">0b0</td>
+<td colspan="2">0b111</td>
+<td colspan="2">0</td>
+<td colspan="2">0</td>
+<td colspan="2">rd</td>
+<td colspan="2">imm</td>
+</tr>
+</table>
+<div class="format">
+<span class="mnemonic">ARITHI2</span> <span class="type">register</span> rd, <span class="type">register</span> rs, <span class="type">number</span> imm</div>
+<table class="instructionset">
+<tr class="fieldnames">
+<td/>
+<th style="width: 1.5em;" colspan="2">OP<sub>1</sub>
+</th>
+<th style="width: 4.5em;" colspan="2">ALU<sub>3</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RS<sub>4</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RT<sub>4</sub>
+</th>
+<th style="width: 6.0em;" colspan="2">RD<sub>4</sub>
+</th>
+<th style="width: 24.0em;" colspan="2">IMM<sub>16</sub>
+</th>
+</tr>
+<tr class="bitoffsets">
+<th/>
+<td class="left">31</td>
+<td class="right">31</td>
+<td class="left">30</td>
+<td class="right">28</td>
+<td class="left">27</td>
+<td class="right">24</td>
+<td class="left">23</td>
+<td class="right">20</td>
+<td class="left">19</td>
+<td class="right">16</td>
+<td class="left">15</td>
+<td class="right">0</td>
+</tr>
+<tr class="instructionfields">
+<th>ADDI</th>
+<td colspan="2">0b0</td>
+<td colspan="2">0b000</td>
+<td colspan="2">rs</td>
+<td colspan="2">0</td>
+<td colspan="2">rd</td>
+<td colspan="2">imm</td>
+</tr>
+<tr class="instructionfields">
+<th>ANDI</th>
+<td colspan="2">0b0</td>
+<td colspan="2">0b010</td>
+<td colspan="2">rs</td>
+<td colspan="2">0</td>
+<td colspan="2">rd</td>
+<td colspan="2">imm</td>
+</tr>
+<tr class="instructionfields">
+<th>ORI</th>
+<td colspan="2">0b0</td>
+<td colspan="2">0b011</td>
+<td colspan="2">rs</td>
+<td colspan="2">0</td>
+<td colspan="2">rd</td>
+<td colspan="2">imm</td>
+</tr>
+<tr class="instructionfields">
+<th>SHLI</th>
+<td colspan="2">0b0</td>
+<td colspan="2">0b101</td>
+<td colspan="2">rs</td>
+<td colspan="2">0</td>
+<td colspan="2">rd</td>
+<td colspan="2">imm</td>
+</tr>
+<tr class="instructionfields">
+<th>SHRI</th>
+<td colspan="2">0b0</td>
+<td colspan="2">0b110</td>
+<td colspan="2">rs</td>
+<td colspan="2">0</td>
+<td colspan="2">rd</td>
+<td colspan="2">imm</td>
+</tr>
+<tr class="instructionfields">
+<th>SUBI</th>
+<td colspan="2">0b0</td>
+<td colspan="2">0b001</td>
+<td colspan="2">rs</td>
+<td colspan="2">0</td>
+<td colspan="2">rd</td>
+<td colspan="2">imm</td>
+</tr>
+<tr class="instructionfields">
+<th>XORI</th>
+<td colspan="2">0b0</td>
+<td colspan="2">0b100</td>
+<td colspan="2">rs</td>
+<td colspan="2">0</td>
+<td colspan="2">rd</td>
+<td colspan="2">imm</td>
+</tr>
+</table>
+</body>
+</html>

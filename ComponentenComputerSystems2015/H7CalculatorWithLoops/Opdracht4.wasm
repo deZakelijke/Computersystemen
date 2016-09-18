@@ -1,0 +1,17 @@
+@include "CalculatorWithLoops.wasm"
+# Vermenigvuldiging: 8 * 4 door herhaald optellen
+
+.code MyCode : LOOPS_MACHINE 
+  LOADI $6, 4  	# register6 <-- 4
+  LOADI $0, 0  	# (begin)resultaat <-- 0
+
+  loop:
+    ADDI $0, $0, 8 	# (tussen)resultaat
+    SUBI $6, $6, 1 	# register6 <-- register6 -1
+    BNZ  $6, loop   # if( register6 != 0)goto loop
+ 
+  HALT		# einde programma
+
+
+
+

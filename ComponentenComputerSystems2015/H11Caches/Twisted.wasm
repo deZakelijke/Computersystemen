@@ -1,0 +1,25 @@
+@include "16bitCached.wasm"
+
+.data MyReg : REGISTERS, HARVARD
+1 : 	WORD i 0	# index of current pseudo-random number
+	WORD v 1	# current pseudo-random number
+	WORD t	# temporary
+
+.code MyCode  : HARVARD, MyReg
+
+loop:
+	SW 	i, 0, v	# 'random' memory access
+	
+	# the following lines implement the 
+	# linear congruential generator (LCG)
+	# v_{i+1} = (a*v_i + b) mod m
+	# using constants a = 5, b = 3, m = 2^9
+
+	ADD 	t, v, v	# multiply v by 5 in 3 lines
+	ADD 	t, t, t
+	ADD 	v, v, t
+	ADDI	v, v, 3	# add 3
+	ANDI	v, v, 0x01FF	# modulo 512
+
+	ADDI 	i,i,1	# increase counter
+	BRA 	loop

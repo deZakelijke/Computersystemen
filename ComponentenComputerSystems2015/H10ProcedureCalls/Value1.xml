@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="Value" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <RECTANGLE COLOR="#000000" POSX="0.0" POSY="-10.0" WIDTH="20.0"
+            HEIGHT="20.0" RADIUSX="0.0" RADIUSY="0.0">
+            <STROKE/>
+        </RECTANGLE>
+        <TEXT POSX="10.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="SansSerif,plain,14.0">1</TEXT>
+    </FORMS>
+    <IO>
+        <OUTPUT BITS="16" SIGNED="false" POSX="20.0" POSY="0.0" NAME="Value">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <MEMORY/>
+    <INTERNALS DELAY="11">
+        <ACTION EVENT="INIT">		Value = 1;
+		</ACTION>
+    </INTERNALS>
+</SIMPLE>

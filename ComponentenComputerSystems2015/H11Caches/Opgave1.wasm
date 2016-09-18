@@ -1,0 +1,31 @@
+@include "16bitDirectMappedCache.wasm"
+
+.data MyData : DATAMEM
+0d10:     WORD base 0d1
+	WORD      0d2
+       	WORD      0d3
+	WORD      0d4
+       	WORD      0d5
+
+0d64:	WORD base2 0d6
+	WORD      0d7
+       	WORD      0d8
+	WORD      0d9
+       	WORD      0d10
+
+0d168: 	WORD base3 
+
+.code MyCode  : HARVARD, MyData
+	LOADI $5, 5	# 5 getallen
+	LOADI $6, 0	# Start at element 0
+
+loop:	LW $1, base, $6 	# haalt getal uit geheugen
+	XORI $10, $10, 0xAAAA # om beide LW's in Time Seq Diagr te onderscheiden
+	LW $2, base2, $6 
+	ADD $3, $1, $2  
+	SW $3, base3, $6
+	ADDI $6, $6, 1  	# volgende getal en volgende adres 
+	BNE $6, $5, loop	# geen 5 getallen? dan naar loop	
+end: 	HALT
+
+

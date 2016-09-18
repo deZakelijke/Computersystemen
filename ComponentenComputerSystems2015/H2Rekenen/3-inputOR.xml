@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SIMPLE NAME="3-inputOR" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <RECTANGLE COLOR="#000000" POSX="70.0" POSY="10.0" WIDTH="40.0"
+            HEIGHT="60.0" RADIUSX="0.0" RADIUSY="0.0">
+            <STROKE LINEWIDTH="1.0"/>
+        </RECTANGLE>
+        <LINE COLOR="#000000" FROMX="60" FROMY="20" TOX="70" TOY="20">
+            <STROKE LINEWIDTH="1.0"/>
+        </LINE>
+        <LINE COLOR="#000000" FROMX="60" FROMY="40" TOX="70" TOY="40">
+            <STROKE LINEWIDTH="1.0"/>
+        </LINE>
+        <LINE COLOR="#000000" FROMX="60" FROMY="60" TOX="70" TOY="60">
+            <STROKE LINEWIDTH="1.0"/>
+        </LINE>
+        <TEXT POSX="85.0" POSY="20.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="DialogInput,plain,12.0">&#8805;1</TEXT>
+        <LINE COLOR="#000000" FROMX="120" FROMY="40" TOX="110" TOY="40">
+            <STROKE LINEWIDTH="1.0"/>
+        </LINE>
+    </FORMS>
+    <IO>
+        <INPUT BITS="1" SIGNED="false" POSX="60.0" POSY="20.0" NAME="v">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="60.0" POSY="40.0" NAME="w">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="60.0" POSY="60.0" NAME="x">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="120.0" POSY="40.0" NAME="Z">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <MEMORY/>
+    <INTERNALS DELAY="1">
+        <ACTION EVENT="INPUT_CHANGE">Z = v || w || x;</ACTION>
+    </INTERNALS>
+</SIMPLE>

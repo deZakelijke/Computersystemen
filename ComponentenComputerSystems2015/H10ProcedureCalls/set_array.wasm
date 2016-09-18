@@ -1,0 +1,46 @@
+@include "16bitJumper.wasm"
+.data MyData : REGISTERS
+@include "register_constants.wasm"
+
+.code MyCode : REGSTACK, MyData
+# the main program
+JAL set_array
+HALT
+	
+set_array: 
+SUBI $sp, $sp, 13 # move stack pointer
+SW $ra, 11, $sp # save return address
+SW $a0, 10, $sp # save parameter (num)
+ADD $s0, $zero, $zero # i = 0
+ADDI $t0, $zero, 3 # max iterations is 3
+loop: 
+ADD $t1, $s0, $s0 # $t1 = i +1?
+ADD $t2, $sp, $t1 # $t2 = address of array[i]
+ADD $a0, $a0, $zero # pass num as parameter
+ADD $a1, $s0, $zero # pass i as parameter
+JAL compare # call compare(num, i)
+SW $v0, 0, $t2  # array[i] = compare(num, i);
+ADDI $s0, $s0, 1
+BEQ $s0, $t0, 2 # loop if i<3
+BRA loop
+LW $a0, 10, $sp # restore parameter (num)
+LW $ra, 11, $sp # restore return address
+ADDI $sp, $sp, 13 # restore stack pointer
+JR $ra # return
+
+compare: 
+SUBI $sp, $sp, 2 # move stack pointer
+SW $ra, 0, $sp # save return address
+JAL sub # can jump directly to sub
+BZ $v0, 2
+ADDI $v0, $zero,1    # if sub(a,b) == 0, return 1
+BRA 2
+ADDI $v0, $zero,0    # if sub(a,b) == 0, return 0
+LW $ra, 0, $sp # restore return address
+ADDI $sp, $sp, 2 # restore stack pointer
+JR $ra # return
+
+sub:
+SUB $v0, $a0, $a1 # return a-b
+JR $ra # return
+

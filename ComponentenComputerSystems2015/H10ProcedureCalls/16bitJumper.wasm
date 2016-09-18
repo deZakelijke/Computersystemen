@@ -1,0 +1,144 @@
+# Author: Wouter Koolen-Wijkstra
+# This file contains the Harvard Jumper (Memory Stack Machine)
+# assembler instruction format definition
+# Modified 7-10-2013 by Ben Bruidegom to
+# - restrict ALU operations to ADD, SUB, AND, OR, XOR, SHL, SHR, COPY
+# - Branch instructions BEQ, BNE, BZ, BNZ, BA, HALT
+# - rearrange opcode bits to be a proper extension of the Calculator.
+
+
+# first: machine information for the compiler
+
+.processor REGSTACK
+.setting targetMemory = "16 bit Harvard with Procedure Calls.Instruction Memory:Memory"
+.autocast {
+        number -> address
+        number -> label
+}
+
+
+
+# second: the register constants
+# there is a simple flat 16 register file
+# we should however stick to the meaningful names like $sp, $a0,...
+
+.constant {
+   $0   =	0x0/register
+   $1   = 	0x1/register 
+   $2   = 	0x2 /register
+   $3   = 	0x3 /register
+   $4   = 	0x4 /register
+   $5   = 	0x5 /register
+   $6   = 	0x6 /register
+   $7   = 	0x7 /register
+   $8   = 	0x8 /register
+   $9   = 	0x9 /register
+   $10  = 	0xA /register
+   $11  = 0xB /register
+   $12  = 	0xC /register
+   $13  = 	0xD /register
+   $14  = 	0xE /register
+   $15  = 	0xF /register
+}
+
+
+.highlight {
+	# hack to highlight the first instruction on the START of the first
+	# cycle already. We normally highlight instructions on the END of their
+	# cycle. This one is roze
+	[ "16 bit Harvard with Procedure Calls.Instruction Memory" | "0xFFFF-(Address==0xFFFF)*Address" | "#c8c8ff"]
+	# and this one is turquoise
+	[ "16 bit Harvard with Procedure Calls.Instruction Memory" | "Address" | "#bbE0E0"]
+}
+
+
+# third: instruction format and instruction definitions
+
+.opcodepartition {
+	DEFAULT = [ FirstReg:1, MemWrite:1, ResultOrigin:2, Branch:1, Invert:1, RegWrite:1, SecReg:1, ALU:0d3, RS:0d4, RT:0d4, RD: 0d4, IMM:0d16 ]
+	JUMP =    [ FirstReg:1, MemWrite:1, ResultOrigin:2, Branch:1, Invert:1, RegWrite:1, SecReg:1, ALU:0d3, RS:0d4, RT:0d4, RD: 0d4, OFFS:0d16 ]
+}
+
+
+# calls a procedure. Use stack in memory to preserve some registers
+#.instructionformat   CALL2 = [JUMP | rd:0d4/register, offs:0d16/label]
+#.instructiondefinition CALL =	[CALL2 | "FirstReg=0; MemWrite=0; ResultOrigin=2; Branch=1; Invert=0; RegWrite=1; SecReg=1; ALU = 0x1; RS = 0; RT = 0; RD = rd; OFFS = offs-self;"]
+
+# Equivalent to CALL $ra (assuming $ra = 15)
+.instructionformat   CALL1 = [JUMP | offs:0d16/label]
+.instructiondefinition JSR =	[CALL1 | "FirstReg=0; MemWrite=0; ResultOrigin=2; Branch=1; Invert=0; RegWrite=1; SecReg=1; ALU = 0x1; RS = 0; RT = 0; RD = 0xF; OFFS = offs-self;"]
+
+# procedure return (I like RETURN in the context of a procedure return, but book uses JR)
+.instructionformat   RETURN = [JUMP | rs:0d4/register]
+.instructiondefinition RETURN = [RETURN | "FirstReg = 1; MemWrite=0; ResultOrigin=0; Branch=1; Invert=0; RegWrite=0; SecReg=1; ALU = 0x1; RS = rs; RT = rs; RD = 0; OFFS = 0x0000;"]
+.instructiondefinition JR =	[RETURN | "FirstReg = 1; MemWrite=0; ResultOrigin=0; Branch=1; Invert=0; RegWrite=0; SecReg=1; ALU = 0x1; RS = rs; RT = rs; RD = 0; OFFS = 0x0000;"]
+
+# our good old friend: identity
+.instructionformat   NOP = [DEFAULT |]
+.instructiondefinition NOP =	[NOP |" FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0; RegWrite=0; SecReg=0; ALU = 0x0; RS = 0x0; RT = 0x0; RD = 0x0; IMM = 0;"]
+
+
+# unary logic/arithmetic on registers
+.instructionformat   ARITH1 = [DEFAULT | rd:0d4/register, rt:0d4/register]
+.instructiondefinition COPY =	[ARITH1	| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0; RegWrite=1; SecReg=1; ALU = 0x7; RS = 0; RT = rt; RD = rd; IMM = 0;"]
+
+# binary logic/arithmetic on registers
+.instructionformat   ARITH2 = [DEFAULT | rd:0d4/register, rs:0d4/register, rt:0d4/register]
+.instructiondefinition SUB =	[ARITH2	| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0;  RegWrite=1; SecReg=1; ALU = 0x1; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition ADD =	[ARITH2	| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0;  RegWrite=1; SecReg=1; ALU = 0x0; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition XOR =	[ARITH2	| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0;  RegWrite=1; SecReg=1; ALU = 0x4; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition OR =	[ARITH2	| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0;  RegWrite=1; SecReg=1; ALU = 0x3; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition AND= 	[ARITH2	| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0;  RegWrite=1; SecReg=1; ALU = 0x2; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition SHL= 	[ARITH2	| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0;  RegWrite=1; SecReg=1; ALU = 0x5; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+.instructiondefinition SHR= 	[ARITH2	| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0;  RegWrite=1; SecReg=1; ALU = 0x6; RS = rs; RT = rt; RD = rd; IMM = 0;"]
+
+# unary logic/arithmetic on immediate
+.instructionformat   ARITHI1 = [DEFAULT | rd:0d4/register, imm:0d16/number]
+.instructiondefinition LOADI =	[ARITHI1 |	" FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0;  RegWrite=1; SecReg=0; ALU = 0x7; RS = 0; RT = 0; RD = rd; IMM = imm;"]
+
+# binary logic/arithmetic on register-immediate
+.instructionformat   ARITHI2 = [DEFAULT | rd:0d4/register, rs:0d4/register, imm:0d16/number]
+.instructiondefinition SUBI =	[ARITHI2| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0; RegWrite=1; SecReg=0; ALU = 0x1; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition ADDI =	[ARITHI2| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0; RegWrite=1; SecReg=0; ALU = 0x0; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition XORI =	[ARITHI2| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0; RegWrite=1; SecReg=0; ALU = 0x4; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition ORI =	[ARITHI2| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0; RegWrite=1; SecReg=0; ALU = 0x3; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition ANDI =	[ARITHI2| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0; RegWrite=1; SecReg=0; ALU = 0x2; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition SHLI= 	[ARITHI2| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0; RegWrite=1; SecReg=0; ALU = 0x5; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+.instructiondefinition SHRI= 	[ARITHI2| " FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=0; Invert=0; RegWrite=1; SecReg=0; ALU = 0x6; RS = rs; RT = 0; RD = rd; IMM = imm;"]
+
+
+# endless self-loop. Kind of useful in combination with highlighting
+.instructionformat   HALT = [JUMP | ]
+.instructiondefinition HALT =	[HALT| "FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=1; Invert=0; RegWrite=0; SecReg=1; ALU = 0x1; RS = 0; RT = 0; RD = 0; OFFS = 0x0;"]
+
+
+# Unconditional branch.
+.instructionformat   BRANCH0 = [JUMP | offs:0d16/label]
+.instructiondefinition BRA =	[BRANCH0| "FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=1; Invert=0; RegWrite=0; SecReg=1; ALU = 0x1; RS = 0; RT = 0; RD = 0; OFFS = offs-self;"]
+
+# Branch if zero.
+.instructionformat   BRANCH1 = [JUMP | rt:0d4/register, offs:0d16/label]
+.instructiondefinition BZ =	[BRANCH1| "FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=1; Invert=0; RegWrite=0; SecReg=1; ALU = 0x7; RS = 0; RT = rt; RD = 0; OFFS = offs-self;"]
+.instructiondefinition BNZ =	[BRANCH1| "FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=1; Invert=1; RegWrite=0; SecReg=1; ALU = 0x7; RS = 0; RT = rt; RD = 0; OFFS = offs-self;"]
+
+# Branch if equal. Note that we can not have a BEQI, for the intermediate field
+# is used for the jump offset
+.instructionformat   BRANCH2 = [JUMP | rs:0d4/register, rt:0d4/register, offs:0d16/label]
+.instructiondefinition BEQ =	[BRANCH2| "FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=1; Invert=0; RegWrite=0; SecReg=1; ALU = 0x1;  RS = rs; RT = rt; RD = 0; OFFS = offs-self;"]
+.instructiondefinition BNE =	[BRANCH2| "FirstReg=0; MemWrite=0; ResultOrigin=0; Branch=1; Invert=1; RegWrite=0; SecReg=1; ALU = 0x1;  RS = rs; RT = rt; RD = 0; OFFS = offs-self;"]
+
+# memory interface instructions
+.instructionformat   LOADSTORE = [JUMP | rd:0d4/register, offs:0d16/address, rs:0d4/register]
+.instructiondefinition LW 	=[LOADSTORE | "FirstReg=0; MemWrite=0; ResultOrigin=1; Branch=0; Invert=0; RegWrite=1; SecReg=0; ALU = 0x0; RS = rs; RT = 0; RD = rd; OFFS = offs;"]
+.instructiondefinition SW 	=[LOADSTORE | "FirstReg=0; MemWrite=1; ResultOrigin=0; Branch=0; Invert=0; RegWrite=0; SecReg=0; ALU = 0x0; RS = rs; RT = rd; RD = 0; OFFS = offs;"]
+
+
+
+.memory DATAMEM
+.setting targetMemory = "16 bit Harvard with Procedure Calls.Data Memory:Memory"
+
+.memory REGISTERS
+.setting { 
+	targetMemory = "16 bit Harvard with Procedure Calls.Registers:Registers"
+	addressType = register
+}

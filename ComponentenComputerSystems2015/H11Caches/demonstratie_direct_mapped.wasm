@@ -1,0 +1,30 @@
+@include "16bitCached.wasm"
+
+.data MyData : DATAMEM
+0d0:      WORD base 0d1
+	WORD      0d2
+       	WORD      0d3
+	WORD      0d4
+       	WORD      0d5
+
+0d64:	WORD base2 0d6
+	WORD      0d7
+       	WORD      0d8
+	WORD      0d9
+       	WORD      0d10
+
+.data MyRegisters: REGISTERS
+
+0d1: WORD index 0
+
+.code MyCode  : HARVARD, MyData, MyRegisters
+
+loop:
+	LW $4, base, index
+	LW $5, base2, index
+	ADDI index, index, 0d1
+	BRA loop
+		
+end: 	HALT
+
+

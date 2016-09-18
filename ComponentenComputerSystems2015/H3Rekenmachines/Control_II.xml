@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="Control_II" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <LINE COLOR="#000000" FROMX="260" FROMY="150" TOX="260" TOY="350">
+            <STROKE LINEWIDTH="3.0"/>
+        </LINE>
+    </FORMS>
+    <IO>
+        <INPUT BITS="32" SIGNED="false" POSX="260.0" POSY="270.0" NAME="Instruction">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="4" SIGNED="false" POSX="260.0" POSY="250.0" NAME="RS">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="4" SIGNED="false" POSX="260.0" POSY="310.0" NAME="RT">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="4" SIGNED="false" POSX="260.0" POSY="350.0" NAME="RD">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="3" SIGNED="false" POSX="260.0" POSY="170.0" NAME="S">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="260.0" POSY="150.0" NAME="SecReg">
+            <LABEL POSX="-50.0" POSY="-10.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="16" SIGNED="false" POSX="260.0" POSY="190.0" NAME="IMM">
+            <LABEL POSX="-40.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <MEMORY/>
+    <INTERNALS DELAY="1">
+        <ACTION EVENT="INPUT_CHANGE">
+{
+	SecReg = Instruction &gt;&gt; 0d31;
+	S =    Instruction &gt;&gt; 0d28;
+	IMM =   Instruction;
+	RS = 	Instruction &gt;&gt; 0d24;
+	RT = 	Instruction &gt;&gt; 0d20;
+	RD = 	Instruction &gt;&gt; 0d16;
+
+}
+		</ACTION>
+    </INTERNALS>
+</SIMPLE>

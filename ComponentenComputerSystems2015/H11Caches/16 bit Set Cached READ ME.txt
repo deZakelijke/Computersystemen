@@ -1,0 +1,25 @@
+*** 16 bit Harvard processor with 2-set associative caching ***
+This machine uses a 2-set associative cache, as opposed to a direct mapped one.
+The cache memory is still 16 cache lines, but each 4 word line in the data memory is mapped to
+a cache set of 2 cache lines. Thus the index requires only 3 bits, while the tag requires 4 bits.
+In summary, this is how the memory address is interpreted:
+
+Tag (4 bit) | Index (3 bit) | Block Offset (2 bit)
+
+The cache decides in which of the two lines the memory line will be stored via the method of least recently used.
+This means that the cache line that is least recently used will be overwritten with new data. This hopefully increases the
+relevance of the data in the cache (i.e. more cache hits).
+
+Machine name:
+	16bitSetCached.xml.sim-pl					(openable in editor)
+	16 bit 2-set cached Harvard Processor		(openable in executer)
+	
+Machine source code:
+	16bitCached.wasm
+	16bitSetCached.wasm
+	
+	Both files are identical and either one can be used.
+	It's the same source as the direct mapped cache Harvard processor.
+
+New components:
+	2SetCache.sim-pl

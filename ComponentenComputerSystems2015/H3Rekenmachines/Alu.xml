@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="Alu" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <POLYGON COLOR="#333333">
+            <STROKE LINEWIDTH="2.0"/>
+            <POINT POSX="-20.0" POSY="-50.0"/>
+            <POINT POSX="-20.0" POSY="-10.0"/>
+            <POINT POSX="-10.0" POSY="0.0"/>
+            <POINT POSX="-20.0" POSY="10.0"/>
+            <POINT POSX="-20.0" POSY="50.0"/>
+            <POINT POSX="30.0" POSY="20.0"/>
+            <POINT POSX="30.0" POSY="-20.0"/>
+        </POLYGON>
+        <TEXT POSX="10.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Serif,plain,14.0">ALU</TEXT>
+        <TEXT POSX="-10.0" POSY="-30.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Serif,plain,12.0">A</TEXT>
+        <TEXT POSX="-10.0" POSY="30.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Serif,plain,12.0">B</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="16" SIGNED="false" POSX="-20.0" POSY="-30.0" NAME="Src0">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="16" SIGNED="false" POSX="-20.0" POSY="30.0" NAME="Src1">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="16" SIGNED="false" POSX="30.0" POSY="0.0" NAME="Result">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="5.0" POSY="-35.0" NAME="S1">
+            <LABEL POSX="15.0" POSY="-20.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="15.0" POSY="-30.0" NAME="S0">
+            <LABEL POSX="25.0" POSY="-15.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="-5.0" POSY="-40.0" NAME="S2">
+            <LABEL POSX="0.0" POSY="-15.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+    </IO>
+    <MEMORY/>
+    <INTERNALS DELAY="3">
+        <ACTION EVENT="INPUT_CHANGE">
+			// ALU (Arithmetical Logical Unit)
+{
+	 if (S2 == 0d0 &amp;&amp; S1 == 0d0 &amp;&amp; S0 == 0d0) Result =  (Src0 + Src1);
+else if (S2 == 0d0 &amp;&amp; S1 == 0d0 &amp;&amp; S0 == 0d1) Result =  (Src0 + ~Src1+1);
+else if (S2 == 0d0 &amp;&amp; S1 == 0d1 &amp;&amp; S0 == 0d0) Result =  (Src0 &amp; Src1);
+else if (S2 == 0d0 &amp;&amp; S1 == 0d1 &amp;&amp; S0 == 0d1) Result =  (Src0 | Src1);
+else if (S2 == 0d1 &amp;&amp; S1 == 0d0 &amp;&amp; S0 == 0d0) Result =  (Src0 ^ Src1);
+else if (S2 == 0d1 &amp;&amp; S1 == 0d0 &amp;&amp; S0 == 0d1) Result =  (Src0 &lt;&lt; Src1);
+else if (S2 == 0d1 &amp;&amp; S1 == 0d1 &amp;&amp; S0 == 0d0) Result =  (Src0 &gt;&gt; Src1);
+else if (S2 == 0d1 &amp;&amp; S1 == 0d1 &amp;&amp; S0 == 0d1) Result =  Src1;
+}
+		</ACTION>
+    </INTERNALS>
+</SIMPLE>

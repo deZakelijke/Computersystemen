@@ -1,0 +1,31 @@
+# Wouter Koolen-Wijkstra
+# This program performs a single procedure call
+# to the identity function
+
+@include "16bitJumper.wasm"
+
+
+.data MyData : REGISTERS
+@include "register_constants.wasm"
+
+.code MyCode : REGSTACK, MyData
+
+# this is the main program
+
+LOADI 	$arg1, 4	# set up single argument
+JSR 	id	# and call identity function
+HALT		# endless loop
+
+
+
+#--------------- ID procedure ------------------------
+id:
+# id procedure: id(n) = n
+
+# contract:
+# $ra contains the return adress
+# $arg1 is the only used input register, it contains n
+# $val1 is the only used output register. it receives id(n) = n
+
+COPY 	$val1, $arg1	# simply copy input to output
+RETURN 	$ra	# and return

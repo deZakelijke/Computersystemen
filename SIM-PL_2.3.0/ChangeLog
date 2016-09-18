@@ -1,0 +1,306 @@
+Current version: 2.3.0
+
+================================================================================
+Improvements in version 2.3.0
+2.3.0:1  Highlights are now applied in the order they are listed. This ensures 
+	 that the last highlight wins when multiple highlights coincide.
+2.3.0:2  Constants in Wisent progams without 0x/0b are now interpreted as 
+	 decimal. Reviewed all cases in my component library where this made 
+	 a difference.
+2.3.0:3  Make all pins/memories Rvalues when processing highlights.
+2.3.0:4  Fix a couple of graphics glitches on tools where some paint remained
+	 after the tool was quit.
+
+
+	
+
+
+================================================================================
+Improvements in version 2.2.9
+2.2.9:1	 Scroll at reasonable increment in Executer/Editor with mouse-scroll
+2.2.9:2  Zoom in Executer/Editor with CTRL + mouse-scroll
+2.2.9:3  Fixed various small graphical redraw glitches (thanks Fuzzer)
+2.2.9:4  Improved Editor drawing speed of rubber band and dragging components
+2.2.9:5  Gracefully handle spurious mouse release events
+
+================================================================================
+Improvements in version 2.2.8
+2.2.8:1  Work around java bug 7057507 (where icons are forgotten by the runtime)
+	 This fix addresses 2.2.7:2 for real.
+
+================================================================================
+Improvements in version 2.2.7
+2.2.7:1  Unhandled exception dialog. Should produce more reliable exception
+	 information.
+2.2.7:2  Don't use SimpleBeanInfo.loadImage. Don't know why, but it fails for
+	 some users sometimes.
+2.2.7:3  Use icons from oxygen both in Editor and Executer. Share common icons.
+
+================================================================================
+Improvements in version 2.2.6
+2.2.6:1  Support for loading Programs in Hardware (for Coachlab)
+2.2.6:2  Disable useless buttons when no file loaded in Editor or Executer
+2.2.6:3  Fixed a problem with PDF, SVG and EPS graphics. This bug caused
+	 text and labels to appear in the wrong place.
+2.2.6:4  Fixed mouse-over error message in the Hardware window.
+2.2.6:5  Fixed drawing of rectangles without rounded corners. The left-top
+	 corner appears incorrectly. Only visible with high zoom.
+	================================================================================
+Improvements in version 2.2.5
+2.2.5:1  Rudimentary support for Coachlab
+
+================================================================================
+Improvements in version 2.2.4
+2.2.4:1  More KDE4 logo names. (Using the Oxygen Theme)
+2.2.4:2  Work around getNormalizingTransform problems. This should fix the
+	 bug that on specific machines the mouse cursor is off when zooming.
+
+================================================================================
+Improvements in version 2.2.3
+2.2.3:1  Adapt to KDE4 logo names. (Some logos got renamed)
+2.2.3:2  Suggest component name as default worksheet name,
+         thus preventing "X.sim-pl.sim-pl-ws" worksheet filenames.
+2.2.3:3  Add tooltip text to all Editor tool buttons
+2.2.3.4  Tell user why selecting a component while opening a worksheet fails,
+	 and vice versa.
+
+================================================================================
+Improvements in version 2.2.2
+2.2.2:1  Really fixed relative directory resolution.
+         Softened over-zealous check
+2.2.2:2  Made SIM-PL Java Web Start capable
+
+================================================================================
+Improvements in version 2.2.1
+2.2.1:1  Fixed relative directory resolution. On Windows, there are multiple
+         filesystem roots (they call 'em drives), and so it is not always
+         possible to construct a relative path from a file to a base directory.
+         We can't do much but resort to absolute paths. So if you have
+         subcomponents on C: and you include them in a complex component on D:,
+         then your component paths will be absolute and your complex component
+         will not be portable.
+
+================================================================================
+Improvements in version 2.2.0
+2.2.0:1  WASM now supports multi-word instructions.
+2.2.0:2  16 bit Bus architecture added.
+2.2.0:3  Editable table cells now commit when the table loses focus.
+         (They used to remain in edit mode instead.)
+         Affected tables are the property table in the Editor, and the
+         instance editor tables in the Executer.
+2.2.0:4  Always display numbers without prefix. Also parse un-prefixed numbers
+         using the current number format.
+2.2.0:5  Added Harvard Pipeline
+
+================================================================================
+Improvements in version 2.1.8
+2.1.8:1  Flag names containing '.' and ':' as erroneous in editor
+
+================================================================================
+Improvements in version 2.1.7
+2.1.7:1  SAL highlights work like WASM higlights. The instruction last executed
+         is highlighted. At the beginning, the first instruction is shown in a
+         different colour.
+2.1.7:2  Complex components are recompiled whenever a component is saved. The
+         resulting log is displayed in that component's error panel.
+2.1.7:3  Executer does not ask whether you want to save the worksheet.
+
+================================================================================
+Improvements in version 2.1.6
+2.1.6:1  Fixed NullpointerException in comparing newly opened component to
+         existing components. If an unnamed component was present, a nullpointer
+         exception was thrown (and no feedback to GUI-only users shown).
+2.1.6:2  Properly remember Editor font
+2.1.6:3  Default Program Editor font set to 12 pts.
+2.1.6:4  Added zoom level 12.5% to TSD, removed 1600%.
+2.1.6:5  Removed "Schedule" button. We now directly place values in the
+         storage that is being edited.
+2.1.6:6  Fixed bug caused by not absolutifying command-line worksheets argument.
+
+================================================================================
+Improvements in version 2.1.5
+2.1.5:1  Understand offset specifiers in the 5th (instruction compilation) pass.
+
+================================================================================
+Improvements in version 2.1.4
+2.1.4:1  Change wording of Editor's "Open..." tooltip to
+         "Edit an existing component"
+2.1.4:2  Make Executer treat a 1st command line argument as a worksheet and not
+         a component.  Thus we open an existing worksheet, not create one anew.
+2.1.4:3  Added WASMdoc Instruction Set Formatter tool.
+2.1.4:4  Editor now keeps track of current stroke and current colour settings. A
+         new wire (that does not connect from an existing wire) receives the
+         current stroke and colour.
+
+================================================================================
+Improvements in version 2.1.3
+2.1.3:1  Set Program Editor and Time Table Dialog title correctly after
+         loading worksheet. They used to be put to the title of these windows
+         just before saving the worksheet.
+
+================================================================================
+Improvements in version 2.1.2
+2.1.2:1  Honor probe (v|h)alignment.
+2.1.2:2  Wired pins now display their probes with the correct sign.
+
+================================================================================
+Improvements in version 2.1.1
+2.1.1:1  Consistly say Truth Table
+2.1.1:2  Fixed random worksheet load error. The problem was that views were not
+         *removed* from the root window when they were closed (by clicking 'x').
+         the result was that the ViewSerialiser output some view IDs that were
+         no longer present in the XML.
+2.1.1:3  Fixed bug loading problematic component files (i.e. files for which
+         java.io.File.lastModification returns 0L. The code would throw a
+         null exception, causing a NullPointerException.
+
+================================================================================
+Improvements in version 2.1.0
+2.1.0:1  Data entry in the Executer. The user just clicks a pin, a dialog
+         appears asking for a value, and the value is immediately set in the
+         simulation.
+
+================================================================================
+Improvements in version 2.0.3
+2.0.3:1  The program editor's 'Save As' now updates the filename in the titlebar
+2.0.3:2  Integrated all Executer dialogs into a single window using InfoNode's
+         GPL docking framework library.
+
+================================================================================
+Improvements in version 2.0.2
+2.0.2:1  Corrected TimeSequenceDiagram layout. Under some circumstances (like
+         high zoom) the graphs were clipped somewhere to the center of the time.
+         Now all graphs are always as wide as the whole window.
+
+================================================================================
+Improvements in version 2.0.1
+2.0.1:1  Legacy data file error: Legacy components can include self-loop edges.
+         we just ignore these during format conversion.
+2.0.1:2  Legacy data file error: Legacy components can reference non-existing
+         subcomponent pins. We do have a mechanism to handle that in v2, so we
+         just use that. (This means a red cross errormark will be shown)
+         We use the subcomponent position for the mark position.
+2.0.1:3  Handle zero linewidth correctly. Zero linewidth (in java) means that
+         the smallest possible linewidth (1 pixel) will be used. This is
+         consistent with very small linewidths (say 0.01), that will also show
+         up as single-pixel lines. (Unless they are enlarged enough)
+2.0.1:4  Improved mouse selection. Got rid of hard threshold. We now select the
+         object whose graphical representation is closest to the cursor. We
+         break ties by selecting frontmost objects first.
+2.0.1:5  We now bypass the priority queue entirely for internal arrays. This was
+         necessary to implement caching. It is a general improvement though, for
+         it allows for cleaner modelling. It is also faster.
+2.0.1:6  Fixed a division by zero in round-ractangle distance computation code.
+2.0.1:7  Added Cut/Copy/Paste menu items in Program Editor menu. I don't know
+         how to disable them appropriately though. They are always enabled now.
+2.0.1:8  Image outputting from executer always drew both probe stubs, value-
+         labels and pin-labels. Now we never draw probe stubs, and draw the
+         other to according to the menu selection.
+2.0.1:9  We now allow WASM typecasting of identifiers. E.g. we can write
+         LI $1, addr/number
+         Typecasting used to be only available for number constants.
+2.0.1:10 Handle open request (double click) on non-resolved (red rectangle)
+         subcomponents. We interpreted them as re-read requests.
+2.0.1:11 Corrected init() sequence. Now we first execute all INIT events, then
+         recompute all wires, and finally send INPUT_CHANGE events to all
+         components. Steps one and three used to be merged, which resulted in
+         incorrect behaviour if the INIT event changed the value of an output.
+
+================================================================================
+Improvements in version 2.0.0
+
+2.0:1   Wires can now be selected in the Executer. Clicking a wire once adds it
+        to the TimeSequenceDialog. Clicking it twice removes it again. This is
+        the same behaviour as for pins.
+2.0:2   Editor supports save-as as expected.
+2.0:3   Editor supports removal of subcomponents. All incoming wires are
+        deleted.
+2.0:4   New Logo. Hence new splash screen.
+2.0:5   Tools now provide tooltips on the component view.
+2.0:6   Wires do now have a name.
+2.0:7   Replaced "Export" button by "Save" button in Editor toolbar
+2.0:8   Re-enabled Help menu item of Editor
+2.0:9   Added "Web Page" menu item  to the "Help" menu of Editor and Executer
+2.0:10  New file format. Old components are converted when loaded.
+2.0:11  Probes can now be placed on wires (yellow) or on pins (pinkish). This
+        makes a difference in the case of wires with multiple senders. The wire
+        displays the so called wired-or of the senders, while the sender pins
+        themselves display their own output.
+2.0:12  Constants are now allowed as memory addresses in the WASM file format.
+        For example, if $1 is a constant, one could write
+            $1: WORD var 100
+        as a memory initialiser line. The variable name may be omitted.
+2.0:13  SubComponents are now constructed by first choosing a file, and then
+        filling in the required fields. Before, one had to provide the file
+        name as one of the construction properties. The current behaviour is
+        identical to that of SIM-PL v1.
+2.0:14  Editor tabs remain sorted  alphabetically by Component name at all times
+2.0:15  Double-clicking a subcomponent opens it
+2.0:16  Open Editor maximised
+2.0:17  Pin labels can now be positioned by dragging the pin-tool. The
+        reasonably sane default position is still available, by merely clicking.
+2.0:18  Moving labels and pins at the same time does not cause labels to be
+        moved double distance anymore.
+2.0:19  Use the ".sim-pl" extension for component files, instead of the much
+        too general ".xml". This allows component files to be associated to
+        SIM-PL by file managers.
+2.0:20  Removed color field from PinDialog. Pins receive their color
+        automatically, based on their type.
+
+================================================================================
+Improvements in version 2.0.beta-13
+2.0.beta-13.1  Font editor
+2.0.beta-13.2  Removed (unimplemented) XML tab. The other tab (GUI) was the only
+               tab left, I replaced the entire JTabbedPane with the GUI
+                    JScrollPane. This gives us some nice extra screen space.
+2.0.beta-13.3  Fixed a bug in the compilation error table. Clicking on a line
+               caused an exception. It now takes you to the tree-node that
+                    generated the compilation error, as intended.
+2.0.beta-13.4  Saving files to different directories now works.
+
+================================================================================
+Improvements in version 2.0.beta-12
+2.0.beta-12.1  Unconnected pins now automatically receive probes in the Executer
+               Before this fix, only complex inputs received probes
+2.0.beta-12.2  Settings -> "View Values" and "View Labels" work again
+2.0.beta-12.3  You can now move selected components a grid step with the
+               using the keyboard. I was unable to map the arrow keys to this
+               movement, as they are already claimed by the scroll panel. I
+               chose 'w', 'a', s' and 'd', the 'mirrored' keypad on the left.
+2.0.beta-12.4  You can now specify autocast rules in WASM definition files.
+2.0.beta-12.5  WASM highlights work again (they were disabled somewhere
+               in the transition to 2.0)
+2.0.beta-12.6  I implemented the 16 bit Harvard processor (using amongst others
+               a horizontally flipped multiplexor and an arrow symbol in text)
+2.0.beta-12.7  probe value labels are now 1 point wider, they used to look too
+               short on the right hand side
+2.0.beta-12.8  Put grid customisation options in the Editor settings menu.
+2.0.beta-12.9  Included BUGS file in distribution package
+
+================================================================================
+Improvements in version 2.0.beta-11
+2.0.beta-11.1  set probe render stroke back to default in graphics exporter
+2.0.beta-11.2  Stroke properties are now saved to XML file.
+2.0.beta-11.3  Stroke properties dialog displays correctly.
+
+================================================================================
+Improvements in version 2.0.beta-10
+2.0.beta-10.1  correctly draw probes (with basic stroke of width 1)
+2.0.beta-10.2  set default font to Serif 14pt
+2.0.beta-10.3  fix for "closing anything but the last tab triggers an exception"
+               this bug is a consequence of Java bug 6368047. Used workaround
+2.0.beta-10.4  Tabs are shown in alphabetical, instead of 'random', order
+               note: tabs in lower tab-runs come before all tabs in higher runs
+2.0.beta-10.5  Fixed multi-bit wire simulation (replaced AND_BIN with AND_BIT)
+2.0.beta-10.6  Resizing New Action window resizes text component properly
+2.0.beta-10.7  Stroke editor now respects previous join & line end settings
+2.0.beta-10.8  Upgraded to castor 1.0.3
+2.0.beta-10.9  Explicitly set xml encoding to ISO-8859-1. This
+               solves the '\le character becomes ? character on save' bug.
+
+
+
+< large gap in changelog >
+
+
+Import SIM-PL 1.6.9

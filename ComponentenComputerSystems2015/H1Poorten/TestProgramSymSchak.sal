@@ -1,0 +1,6 @@
+# Testprogramma symmetrische schakeling
+#tijd	waarde a  	waarde b
+0:    	a = 0; 	b = 0;
+10:   	a = 1; 	b = 0;
+20:   	a = 0; 	b = 1;
+30:   	a = 1; 	b = 1;

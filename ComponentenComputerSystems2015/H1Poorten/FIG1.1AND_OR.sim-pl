@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<COMPLEX NAME="AND_OR" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <TEXT POSX="170.0" POSY="-10.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="DialogInput,plain,14.0">AND- en OR-poort</TEXT>
+        <TEXT POSX="170.0" POSY="17.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="DialogInput,plain,12.0">P</TEXT>
+        <RECTANGLE COLOR="#666666" POSX="70.0" POSY="-20.0"
+            WIDTH="200.0" HEIGHT="100.0" RADIUSX="15.0" RADIUSY="15.0">
+            <STROKE LINEWIDTH="2.0"/>
+        </RECTANGLE>
+        <TEXT POSX="170.0" POSY="90.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="DialogInput,plain,12.0">Figuur 1.1</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="1" SIGNED="false" POSX="70.0" POSY="20.0" NAME="a">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="70.0" POSY="40.0" NAME="b">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="70.0" POSY="60.0" NAME="c">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="270.0" POSY="40.0" NAME="Y">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <SUBCOMPONENTS>
+        <SUBCOMPONENT NAME="OR" DATA="2-inputOR.xml" POSX="130.0"
+            POSY="10.0" ZOOM="1.0" FLIP="NONE"/>
+        <SUBCOMPONENT NAME="AND" DATA="2-inputAND.xml" POSX="20.0"
+            POSY="0.0" ZOOM="1.0" FLIP="NONE"/>
+    </SUBCOMPONENTS>
+    <CABLEGRAPH>
+        <NODES>
+            <CGPIN ID="ff0ead9b74bc41fa" PINREF="OR:Z"/>
+            <CGPIN ID="67fae3deda590fe5" PINREF="Y"/>
+            <CGPIN ID="7c4dc00646c19165" PINREF="c"/>
+            <CGPIN ID="52d1b10a92216855" PINREF="OR:w"/>
+            <CGPIN ID="c9fbb1ad0ff21dad" PINREF="a"/>
+            <CGPIN ID="3e30a2e109a8ff52" PINREF="AND:v"/>
+            <CGPIN ID="578191940bd82165" PINREF="b"/>
+            <CGPIN ID="7779c4f1e8a799de" PINREF="AND:w"/>
+            <CGPIN ID="12880f9d85784ad4" PINREF="AND:Z"/>
+            <CGPIN ID="2413b307840381fc" PINREF="OR:v"/>
+        </NODES>
+        <EDGES>
+            <EDGE NODE1="ff0ead9b74bc41fa" NODE2="67fae3deda590fe5" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+            </EDGE>
+            <EDGE NODE1="7c4dc00646c19165" NODE2="52d1b10a92216855" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+                <POINT POSX="170.0" POSY="60.0"/>
+                <POINT POSX="170.0" POSY="50.0"/>
+            </EDGE>
+            <EDGE NODE1="c9fbb1ad0ff21dad" NODE2="3e30a2e109a8ff52" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+            </EDGE>
+            <EDGE NODE1="578191940bd82165" NODE2="7779c4f1e8a799de" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+            </EDGE>
+            <EDGE NODE1="12880f9d85784ad4" NODE2="2413b307840381fc" COLOR="#000000">
+                <STROKE LINEWIDTH="1.0"/>
+            </EDGE>
+        </EDGES>
+        <PROBES>
+            <PROBE NODE="12880f9d85784ad4" POSX="170.0" POSY="30.0"
+                HALIGN="CENTER" VALIGN="CENTER"/>
+        </PROBES>
+    </CABLEGRAPH>
+</COMPLEX>

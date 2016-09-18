@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="Data Memory" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <RECTANGLE COLOR="#333333" POSX="-40.0" POSY="-40.0"
+            WIDTH="60.0" HEIGHT="100.0" RADIUSX="15.0" RADIUSY="15.0">
+            <STROKE LINEWIDTH="2.0"/>
+        </RECTANGLE>
+        <TEXT POSX="-10.0" POSY="5.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Dialog,plain,12.0">Data
+Memory
+</TEXT>
+        <TEXT POSX="-35.0" POSY="-20.0" HALIGN="LEFT" VALIGN="CENTER"
+            COLOR="#000000" FONT="Dialog,plain,12.0">Address	</TEXT>
+        <TEXT POSX="-35.0" POSY="30.0" HALIGN="LEFT" VALIGN="CENTER"
+            COLOR="#000000" FONT="Dialog,plain,12.0">Data</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="9" SIGNED="false" POSX="-40.0" POSY="-20.0" NAME="Address">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="16" SIGNED="false" POSX="-40.0" POSY="30.0" NAME="WriteData">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="0.0" POSY="-40.0" NAME="MemWrite">
+            <LABEL POSX="0.0" POSY="-10.0" HALIGN="CENTER" VALIGN="BOTTOM"/>
+        </INPUT>
+        <OUTPUT BITS="64" SIGNED="false" POSX="20.0" POSY="0.0" NAME="ReadData">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="-20.0" POSY="-40.0" NAME="MemRead">
+            <LABEL POSX="0.0" POSY="-10.0" HALIGN="CENTER" VALIGN="BOTTOM"/>
+        </INPUT>
+    </IO>
+    <MEMORY>
+        <STORAGE NAME="Memory" SIZE="512" BITS="16" SIGNED="false"/>
+    </MEMORY>
+    <INTERNALS DELAY="535">
+        <ACTION EVENT="CLOCK_RISING">/* word-indexed memory, 16 bit per word
+   with a 64 bit block read interface
+   and a 16 bit word write interface
+
+   note: when read and write occur simultaneously, we output the NEW data
+*/
+{
+	if (MemWrite) {
+		// write 1 word to memory
+		Memory[Address] = WriteData;
+	}
+
+	if (MemRead) {
+		// read a 4 word block from memory
+		0d9 bit Addr = Address &amp; 0b111111100;
+		ReadData = 	(0d64 bit)Memory[Addr  ]       |
+					(0d64 bit)Memory[Addr+1] &lt;&lt; 0d16 |
+					(0d64 bit)Memory[Addr+2] &lt;&lt; 0d32 |
+					(0d64 bit)Memory[Addr+3] &lt;&lt; 0d48;
+	} else {
+		// output nonsense
+		ReadData = 	~((0d64 bit)0);
+	}
+}
+		</ACTION>
+    </INTERNALS>
+</SIMPLE>

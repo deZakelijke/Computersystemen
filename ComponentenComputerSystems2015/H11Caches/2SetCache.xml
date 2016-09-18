@@ -1,0 +1,381 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="SetCache" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <TEXT POSX="-30.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="SansSerif,plain,14.0">2
+-
+S
+e
+t
+</TEXT>
+        <TEXT POSX="70.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#333333" FONT="SansSerif,plain,14.0">C
+a
+c
+h
+e</TEXT>
+        <POLYGON COLOR="#333333">
+            <STROKE LINEWIDTH="2.0"/>
+            <POINT POSX="-30.0" POSY="-70.0"/>
+            <POINT POSX="-40.0" POSY="-60.0"/>
+            <POINT POSX="-40.0" POSY="60.0"/>
+            <POINT POSX="-20.0" POSY="60.0"/>
+            <POINT POSX="-20.0" POSY="-50.0"/>
+            <POINT POSX="60.0" POSY="-50.0"/>
+            <POINT POSX="60.0" POSY="60.0"/>
+            <POINT POSX="80.0" POSY="60.0"/>
+            <POINT POSX="80.0" POSY="-60.0"/>
+            <POINT POSX="70.0" POSY="-70.0"/>
+        </POLYGON>
+        <TEXT POSX="15.0" POSY="-60.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#333333" FONT="SansSerif,plain,14.0">associative</TEXT>
+    </FORMS>
+    <IO>
+        <INPUT BITS="16" SIGNED="false" POSX="-40.0" POSY="-20.0" NAME="Address">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="16" SIGNED="false" POSX="-40.0" POSY="30.0" NAME="WriteData">
+            <LABEL POSX="-10.0" POSY="-10.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="10.0" POSY="-70.0" NAME="MemRead">
+            <LABEL POSX="0.0" POSY="-10.0" HALIGN="CENTER" VALIGN="BOTTOM"/>
+        </INPUT>
+        <OUTPUT BITS="16" SIGNED="false" POSX="80.0" POSY="0.0" NAME="ReadData">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="9" SIGNED="false" POSX="-20.0" POSY="-20.0" NAME="MMAddress">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="16" SIGNED="false" POSX="-20.0" POSY="30.0" NAME="MMWriteData">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <INPUT BITS="64" SIGNED="false" POSX="60.0" POSY="0.0" NAME="MMReadData">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="-40.0" POSY="40.0" NAME="CacheReady">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="10.0" POSY="-50.0" NAME="MMMemRead">
+            <LABEL POSX="0.0" POSY="10.0" HALIGN="CENTER" VALIGN="TOP"/>
+        </OUTPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="30.0" POSY="-50.0" NAME="MMMemWrite">
+            <LABEL POSX="0.0" POSY="10.0" HALIGN="CENTER" VALIGN="TOP"/>
+        </OUTPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="30.0" POSY="-70.0" NAME="MemWrite">
+            <LABEL POSX="0.0" POSY="-10.0" HALIGN="CENTER" VALIGN="BOTTOM"/>
+        </INPUT>
+    </IO>
+    <MEMORY>
+        <STORAGE NAME="stall" SIZE="1" BITS="3" SIGNED="false"/>
+        <STORAGE NAME="VTagDatasSet" SIZE="8" BITS="138" SIGNED="false"/>
+        <STORAGE NAME="CacheMem" SIZE="16" BITS="64" SIGNED="false"/>
+        <STORAGE NAME="LastUsed" SIZE="8" BITS="1" SIGNED="false"/>
+    </MEMORY>
+    <INTERNALS DELAY="10">
+        <ACTION EVENT="CLOCK_FALLING">/* 2-set associative write-through cache 
+================================================================================
+The Harvard processor uses a 512 word memory. Hence each address is 9 bits 
+wide. This cache uses 4 word data blocks, thus our block offset eats 2 bits. 
+This cache has 16 blocks; we use 3 bits for the index. In total, 4 bits remain 
+for the tag. In summary, a memory address is divided in these three parts:
+	Tag (4 bit) | Index (3 bit) | Block Offset (2 bit)
+
+
+In this piece of code we handle WRITES. WRITES must be handled on a flank, 
+because in the presence of unstable inputs we only want to write once, when
+the values have reached stability.
+
+
+
+
+*/
+{
+if (!stall[0] &amp;&amp; (MemRead || MemWrite))
+	{
+	// Decode adress into 3 parts of set associative cache.
+	// Only considers first 9 bits.
+	2 bit bo = Address;			// eerste 2 bits van adress
+	3 bit ix = Address &gt;&gt; 2;	// index is een bit korter
+	4 bit tg = Address &gt;&gt; 5;
+
+	
+	// read two cache lines at once. 
+	// first line
+	0d138 bit VTagDataSet = VTagDatasSet[ix];
+	0d64 bit Data1 = VTagDataSet;
+	0d4 bit Tag1 = VTagDataSet &gt;&gt; 0d64;
+	0d1 bit v1 = VTagDataSet &gt;&gt; 0d68;	// valid bit
+
+	// second line
+	0d64 bit Data2 = VTagDataSet &gt;&gt; 0d69;
+	0d4 bit Tag2 = VTagDataSet &gt;&gt; 0d133;
+	0d1 bit v2 = VTagDataSet &gt;&gt; 0d137;
+
+
+	if (v1 &amp;&amp; Tag1 == tg)
+	{
+		// cache hit first line
+		// the shift amount to get to block with correct block offset is 16 * bo
+		0d16 bit boshift = ((0d16 bit)bo) &lt;&lt; 4;		// ?
+		
+		//LastUsed[addr] = 0, om aan te geven dat lijn 1 het laatst gebruikt is
+		LastUsed[ix] = 0;
+		
+		if (MemRead)
+		{
+			// output relevant part of block
+			ReadData = Data1 &gt;&gt; boshift;			
+		}
+		if (MemWrite)
+		{
+			0d16 bit OldData = Data1 &gt;&gt; boshift;
+		
+			if (WriteData != OldData)
+			// overwrite relevant part of block
+			{
+				VTagDatasSet[ix] = 
+					(VTagDataSet &amp;~((0d69 bit)0xFFFF &lt;&lt; boshift)) |
+					((0d69 bit)WriteData &lt;&lt; boshift);
+			//write-through
+			MMAddress = Address;
+			MMWriteData = WriteData;
+			MMMemWrite = 1;
+			}	
+		}
+	}
+	
+	else if (v2 &amp;&amp; Tag2 == tg)
+	{		
+		// cache hit second line
+		// the shift amount to get to block with correct block offset is 16 * bo
+		
+		0d16 bit boshift = ((0d16 bit)bo) &lt;&lt; 4;
+		//LastUsed[addr] = 1, om aan te geven dat lijn 2 het laatst gebruikt is
+		LastUsed[ix] = 1;
+		if (MemRead)
+		{
+			// output relevant part of block
+			ReadData = Data2 &gt;&gt; boshift;
+		}
+		if (MemWrite)
+		{
+			0d16 bit OldData = Data2 &gt;&gt; boshift;
+			
+			if (WriteData != OldData)
+			// overwrite relevant part of block
+			{
+				// schuiven naar tweede line
+				VTagDatasSet[ix]=
+					(VTagDataSet &amp;~ ((0d138 bit)0xFFFF &lt;&lt; (boshift + 0d69))) |
+					((0d138 bit)WriteData &lt;&lt; (boshift + 0d69));
+			//Write-through
+			MMAddress = Address;
+			MMWriteData = WriteData;
+			MMMemWrite = 1;
+			}
+		}
+	}
+	
+	else
+	{
+		// cache miss
+		CacheReady = 0;
+		stall[0] = 7;		// stall[0] is 3 bits, highest amount is 7
+		
+		// forward request to main memory
+		MMAddress = Address;
+		MMMemRead = 1;
+		
+		//if we're writing, send data to main memory immediately
+		if (MemWrite) 
+		{
+			MMWriteData = WriteData;
+			MMMemWrite = 1;
+		}
+	}
+	}
+
+}
+</ACTION>
+        <ACTION EVENT="CLOCK_RISING">/* 2-set associative write-through cache 
+================================================================================
+The 2-set associative cache sends each line of 4 addresses in the data memory to a cache set modulo 32, consisting of 2 cache lines.
+The line of 4 memory adresses is written to the least recently used cache line of the cache set.
+
+*/
+
+{
+	MMMemRead = 0;
+	MMMemWrite = 0;
+	
+	0d2 bit bo = Address;
+	0d3 bit addr = Address &gt;&gt; 2;
+	0d4 bit tag = Address &gt;&gt; 5;
+
+	if (stall[0])
+	{
+		--stall[0];
+		
+		if (!stall[0])
+		{
+			// a memory read just completed
+			CacheReady = 1;
+			
+			// check valid bits
+			0d1 bit v1 = VTagDatasSet[addr] &gt;&gt; 0d68;
+			0d1 bit v2 = VTagDatasSet[addr] &gt;&gt; 0d137;
+			
+			0d69 bit line1a = VTagDatasSet[addr];
+			0d138 bit line1 = line1a;
+			0d138 bit line2 = VTagDatasSet[addr] &gt;&gt; 0d69;
+			line2 = line2 &lt;&lt; 0d69;
+
+			if (v1 == 0 )
+			{
+				// write in first line of set				
+				line1 =	(0d138 bit)1 &lt;&lt; 0d68 |
+						(0d138 bit)tag &lt;&lt; 0d64 |
+						MMReadData;
+				//LastUsed[addr] = 0, om aan te geven dat lijn 1 het laatst gebruikt is
+				LastUsed[addr] = 0;
+			}
+
+			else if (v1 == 1 &amp;&amp; v2 == 0)
+			{
+				// write in second line of set
+				0d138 bit MMReadDataDummy =	(0d138 bit)1 &lt;&lt; 0d68 |
+											(0d138 bit)tag &lt;&lt; 0d64 |
+											MMReadData;
+				line2 = MMReadDataDummy &lt;&lt; 0d69;
+				//LastUsed[addr] = 1, om aan te geven dat lijn 2 het laatst gebruikt is
+				LastUsed[addr] = 1;
+			}
+			
+			// LastUsed[addr] = 0, als in line 1 het meest recent geschreven
+			// LastUsed[addr] = 1, als in line 2 het meest recent geschreven
+			// Als v1 = v2 = 1: schrijf in de minst recent gebruikte cache line
+			else if (v1 == 1 &amp;&amp; v2 == 1)
+			{
+				if (LastUsed[addr] == 0)
+				{
+					0d138 bit MMReadDataDummy =	(0d138 bit)1 &lt;&lt; 0d68 |
+					(0d138 bit)tag &lt;&lt; 0d64 |
+					MMReadData;
+					line2 = MMReadDataDummy &lt;&lt; 0d69;
+					//LastUsed[addr] = 1, om aan te geven dat lijn 2 het laatst gebruikt is
+					LastUsed[addr] = 1;
+				}
+				
+				else if (LastUsed[addr] == 1)
+				{
+					line1 =	(0d138 bit)1 &lt;&lt; 0d68 |
+						(0d138 bit)tag &lt;&lt; 0d64 |
+						MMReadData;
+					//LastUsed[addr] = 0, om aan te geven dat lijn 1 het laatst gebruikt is
+					LastUsed[addr] = 0;
+				}
+			}
+			
+			VTagDatasSet[addr] = line1 | line2;
+			ReadData = MMReadData &gt;&gt; (((16 bit)bo) &lt;&lt; 4);
+			
+			
+
+
+
+		}
+	}
+// store into CacheMem for easy visualisation
+CacheMem[2 * addr] = VTagDatasSet[addr];
+CacheMem[2 * addr + 1] = VTagDatasSet[addr] &gt;&gt; 0d69;
+}
+	
+			
+										
+				
+	</ACTION>
+        <ACTION EVENT="INIT">{
+	// initialize all cache lines, visualization memory and LastUsed bits on 0
+	for (4 bit i = 0; i != 0d8; i++)
+	{
+		VTagDatasSet[i] = 0;
+		CacheMem[2 * i] = 0;
+		CacheMem[2 * i + 1] = 0;
+		LastUsed[i] = 0;
+	}
+	
+	stall[0] = 0;
+	MMMemWrite = 0;
+	MMMemRead = 0;
+}</ACTION>
+        <ACTION EVENT="INPUT_CHANGE">/* 2-set associative write-through cache 
+================================================================================
+The Harvard processor uses a 512 word memory. Hence each address is 9 bits 
+wide. This cache uses 4 word data blocks, thus our block offset eats 2 bits. 
+This cache has 8 blocks of 2 cache lines; we use 3 bits for the index. In total, 4 bits remain 
+for the tag. In summary, a memory address is divided in these three parts:
+	Tag (4 bit) | Index (3 bit)  |  Block Offset (2 bit)
+
+In this piece of code we handle READ requests. We ASSUME a cache hit. 
+It is important to handle reads in INPUT_CHANGE so that reads which hit the cache 
+finish (way) BEFORE the downward flank (that is, when the register file writes).
+
+*/
+{
+if (stall[0] == 0 &amp;&amp; MemRead)
+{
+	// decode address into above three parts. Only considers first 9 bits of Address.
+	2 bit bo = Address;
+	3 bit ix = Address &gt;&gt; 2;
+	4 bit tg = Address &gt;&gt; 5;
+
+	// get associated cache block (set of two lines)
+	0d138 bit VTagDataSet = VTagDatasSet[ix];
+	
+	0d64 bit Data1 = VTagDataSet;
+	0d4 bit Tag1 = VTagDataSet &gt;&gt; 0d64;
+	0d1 bit v1 = VTagDataSet &gt;&gt; 0d68;
+	0d64 bit Data2 = VTagDataSet &gt;&gt; 0d69;
+	0d4 bit Tag2 = VTagDataSet &gt;&gt; 0d133;
+	0d1 bit v2 = VTagDataSet &gt;&gt; 0d137;
+	
+	// the shift amount to get word bo from the 4 word block is 16*bo
+	0d16 bit boshift = ((0d16 bit)bo) &lt;&lt; 4;
+
+	
+	if (tg == Tag1)
+	{
+		ReadData = Data1 &gt;&gt; boshift;
+	}
+	
+	else if (tg == Tag2)
+	{
+		ReadData = Data2 &gt;&gt; boshift;
+	}
+	
+	else
+	// flag for bug
+	{
+		ReadData = 0d1234;
+	}
+}
+}
+	
+/*
+	
+	// get associated cache block
+	0d68 bit VTagData = VTagDatas[ix];
+	0d64 bit Data = VTagData;
+	0d3  bit Tag  = VTagData &gt;&gt; 0d64;
+	0d1  bit v    = VTagData &gt;&gt; 0d67;
+
+	// the shift amount to get word bo from the 4 word block is 16*bo
+	0d16 bit boshift = ((0d16 bit)bo) &lt;&lt; 4;
+
+	// output relevant part of 4 word block
+	ReadData = Data &gt;&gt; boshift;
+}
+*/</ACTION>
+    </INTERNALS>
+</SIMPLE>

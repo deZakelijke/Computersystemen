@@ -1,0 +1,25 @@
+@include "16bitHarvard.wasm"
+
+# first 5 numbers in data memory:
+.data MyData : DATAMEM
+0x00:   WORD start1 0x04 
+        WORD start2 0x02 
+        WORD        0x03
+        WORD        0x05
+        WORD        0x01
+
+# naming registers and setting initial values
+.data MyRegisters: REGISTERS
+0x00: WORD index 0
+0x01: WORD temp1
+0x02: WORD temp2
+0x03: WORD diff
+0x04: WORD length 5   # length of array of numbers to sort
+
+.code MyCode  : HARVARD, MyData, MyRegisters
+start:  LW    temp1, start1, index
+        LW    temp2, start2, index
+        SUB   diff,  temp2,  temp1
+        # add your code here
+
+HALT

@@ -1,0 +1,35 @@
+========================================
+Running SIM-PL
+
+Execute one of the following commands in
+your SIM-PL installation directory:
+ java -jar Executer.jar
+ java -jar Editor.jar
+
+(Double) clicking on one of these icons in your
+GUI filebrowser should do this for you automatically.
+
+
+
+
+========================================
+Notes on converting Assembler headers to WASM
+- jump offsets were automatically computed by the Assembler, 
+  but this is no longer the case in WASM. The old mechanism has
+  been replaced by a variable "self", that contains the address
+  of the current instruction. Example: (the intersting part is 
+  the last WSDL statement)
+
+<Assembler>
+#instructiondefinition BEQ      BRANCH2  "OP=0b00110; ALU = 0x2;  RS = rs; RT = rt; RD = 0; OFFS = offs;"
+
+<WASM>
+.instructiondefinition BEQ =    BRANCH2  "OP=0b00110; ALU = 0x2;  RS = rs; RT = rt; RD = 0; OFFS = offs-self;"
+
+
+- lists of fields and parameters are now enclosed in square brackets:
+- what was previously called instructionformat is now split into two:
+  * an opcodepartition. This was repeated many times, and is now factored out.
+  * the new instructionformat, referencing an opcodefield and adding arguments.
+
+- WASM requires equality signs in declarations, between names and definitions.

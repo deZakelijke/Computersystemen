@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<SIMPLE NAME="Inverter" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <RECTANGLE COLOR="#000000" POSX="70.0" POSY="15.0" WIDTH="30.0"
+            HEIGHT="30.0" RADIUSX="0.0" RADIUSY="0.0">
+            <STROKE LINEWIDTH="1.0"/>
+        </RECTANGLE>
+        <LINE COLOR="#000000" FROMX="60" FROMY="30" TOX="70" TOY="30">
+            <STROKE LINEWIDTH="1.0"/>
+        </LINE>
+        <TEXT POSX="80.0" POSY="27.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="DialogInput,plain,14.0">1</TEXT>
+        <ELLIPSE COLOR="#000000" POSX="103.0" POSY="30.0" RADIUSX="3.0" RADIUSY="3.0">
+            <STROKE LINEWIDTH="1.0"/>
+        </ELLIPSE>
+        <LINE COLOR="#000000" FROMX="106" FROMY="30" TOX="110" TOY="30">
+            <STROKE LINEWIDTH="1.0"/>
+        </LINE>
+    </FORMS>
+    <IO>
+        <INPUT BITS="1" SIGNED="false" POSX="60.0" POSY="30.0" NAME="v">
+            <LABEL POSX="-10.0" POSY="0.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+        <OUTPUT BITS="1" SIGNED="false" POSX="110.0" POSY="30.0" NAME="Z">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+    </IO>
+    <MEMORY/>
+    <INTERNALS DELAY="1">
+        <ACTION EVENT="INPUT_CHANGE">Z = !v;</ACTION>
+    </INTERNALS>
+</SIMPLE>

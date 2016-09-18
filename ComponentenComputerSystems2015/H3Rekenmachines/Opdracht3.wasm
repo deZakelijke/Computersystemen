@@ -1,0 +1,10 @@
+@include "Rekenmachine_I.wasm" 
+
+.data MyData : REGISTERS # Data in registers zetten
+3: WORD  0x5555	# 0x is hexadecimaal
+
+.code MyCode : REKENMACHINE_I, MyData 
+ADD $6, $3, $3  
+AND $7, $3, $6	
+
+

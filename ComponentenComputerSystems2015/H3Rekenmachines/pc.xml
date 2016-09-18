@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<SIMPLE NAME="PC" PREFERREDNUMBERFORMAT="Hexadecimal" PREFERREDCYCLELENGTH="10">
+    <PARAMETERS/>
+    <FORMS>
+        <RECTANGLE COLOR="#333333" POSX="-10.0" POSY="-40.0"
+            WIDTH="60.0" HEIGHT="90.0" RADIUSX="10.0" RADIUSY="10.0">
+            <STROKE LINEWIDTH="2.0"/>
+        </RECTANGLE>
+        <LINE COLOR="#000000" FROMX="20" FROMY="44" TOX="26" TOY="50">
+            <STROKE/>
+        </LINE>
+        <LINE COLOR="#000000" FROMX="20" FROMY="44" TOX="14" TOY="50">
+            <STROKE/>
+        </LINE>
+        <TEXT POSX="20.0" POSY="0.0" HALIGN="CENTER" VALIGN="CENTER"
+            COLOR="#000000" FONT="Serif,plain,14.0">Program
+Counter
+(PC)</TEXT>
+    </FORMS>
+    <IO>
+        <OUTPUT BITS="16" SIGNED="false" POSX="50.0" POSY="0.0" NAME="Out">
+            <LABEL POSX="10.0" POSY="0.0" HALIGN="LEFT" VALIGN="CENTER"/>
+        </OUTPUT>
+        <INPUT BITS="1" SIGNED="false" POSX="20.0" POSY="50.0" NAME="CLK">
+            <LABEL POSX="10.0" POSY="20.0" HALIGN="RIGHT" VALIGN="CENTER"/>
+        </INPUT>
+    </IO>
+    <MEMORY>
+        <STORAGE NAME="value" SIZE="1" BITS="16" SIGNED="false"/>
+        <STORAGE NAME="LastCLK" SIZE="1" BITS="1" SIGNED="false"/>
+    </MEMORY>
+    <INTERNALS DELAY="10">
+        <ACTION EVENT="INPUT_CHANGE">// Simple edge-detector
+
+{
+	if (!LastCLK[0] &amp;&amp; CLK) // positive edge
+           value[0]++;		
+	Out = value[0];
+	LastCLK[0] = CLK;		
+}
+		</ACTION>
+    </INTERNALS>
+</SIMPLE>

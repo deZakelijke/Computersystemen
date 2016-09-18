@@ -1,0 +1,4 @@
+#Mijn rekenprogramma
+ 0:  A = 0d3;   B = 0d5;
+10:  A = 0b101; B = 0b1110;
+20:  A = 0d14; B = 0d14;

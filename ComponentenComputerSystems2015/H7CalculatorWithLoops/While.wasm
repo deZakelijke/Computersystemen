@@ -1,0 +1,20 @@
+@include "CalculatorWithLoops.wasm"
+# while( a < b ) do { a = a + 1; b = b - 1 }
+
+.data MyRegisters: REGISTERS
+0: WORD a  9
+1: WORD b  13
+2: WORD temp
+
+.code MyCode : LOOPS_MACHINE, MyRegisters 
+SUBI a, a, 1
+ADDI b, b, 1
+while: 
+   ADDI a, a, 1
+   SUBI b, b, 1
+   SUB temp, a, b 	
+   ANDI temp, temp, 0x8000	# temp is 0 of 0x8000 
+   BNZ temp, while	# if( a < b ) goto while
+
+HALT		# einde programma
+

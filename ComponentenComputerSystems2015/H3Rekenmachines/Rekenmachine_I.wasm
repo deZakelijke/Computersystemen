@@ -1,0 +1,79 @@
+# Authors: Wouter Koolen Wijkstra & Ben Bruidegom Versie aug-2013 
+# Rekenmachine_I WASM instruction set definition
+
+.processor REKENMACHINE_I
+.setting targetMemory = "Rekenmachine_I.Instruction Memory:Memory"
+.autocast {
+	number -> address
+	number -> label
+}
+.constant {
+  $0  = 0x0/register
+  $1  = 0x1/register
+  $2  = 0x2/register
+  $3  = 0x3/register
+  $4  = 0x4/register
+  $5  = 0x5/register
+  $6  = 0x6/register
+  $7  = 0x7/register
+  $8  = 0x8/register
+  $9  = 0x9/register
+  $10 = 0xA/register
+  $11 = 0xB/register
+  $12 = 0xC/register
+  $13 = 0xD/register
+  $14 = 0xE/register
+  $15 = 0xF/register
+}
+
+
+.highlight {
+	# hack to highlight the first instruction on the START of the first
+	# cycle already. We normally highlight instructions on the END of their
+	# cycle. This one is roze
+	[ "Rekenmachine_I.Instruction Memory" | "0xFFFF-(Address==0xFFFF)*Address" | "#c8c8ff"]
+	# and this one is turquoise
+	[ "Rekenmachine_I.Instruction Memory" | "Address" | "#bbE0E0"]
+}
+
+
+.opcodepartition {
+  PART = [S2:0d1, S1:0d1, S0:0d1, RS:0d4, RT:0d4, RD: 0d4]
+}
+
+
+.instructionformat {
+# Code: Unary/Binary x Register
+  UR = [PART | rd:0d4/register, rt:0d4/register               | \
+	"RS=0; RT=rt; RD=rd;" ]
+
+  BR = [PART | rd:0d4/register, rs:0d4/register, rt:0d4/register   | \
+	"RS=rs; RT=rt; RD=rd;" ]
+
+}
+
+.instructiondefinition {
+
+  ADD = [BR | "S2=0b0; S1=0b0; S0=0b0;"]
+  SUB = [BR | "S2=0b0; S1=0b0; S0=0b1;"]
+  AND = [BR | "S2=0b0; S1=0b1; S0=0b0;"]
+  OR = [BR | "S2=0b0; S1=0b1; S0=0b1;"]
+  XOR = [BR | "S2=0b1; S1=0b0; S0=0b0;"]
+  SHL = [BR | "S2=0b1; S1=0b0; S0=0b1;"]
+  SHR = [BR | "S2=0b1; S1=0b1; S0=0b0;"]
+  COPY= [UR | "S2=0b1; S1=0b1; S0=0b1;"]
+}
+
+
+# end of .processor definition
+
+
+
+
+.memory REGISTERS
+.setting {
+  targetMemory = "Rekenmachine_I.Registers:Registers"
+  addressType  = "register"
+}
+
+

@@ -1,0 +1,64 @@
+@include "16bitJumper.wasm"
+
+# computes f(n) = \sum_{i=0}^n i recursively
+
+# we use the following convention
+#
+# $ra : the return address
+# $a0 : the first parameter
+# $v0 : the return value register
+# $sp : the stack pointer (NOTE: the stack grows downward)
+
+
+.data MyData : REGISTERS
+@include "register_constants.wasm"
+.code MyCode : REGSTACK, MyData
+
+
+
+# this is the main program
+# it computes f(4) (=10=0xA)
+
+
+LI 	$a0, 4		# f expects n in $a0
+JAL 	f		# call procedure f
+
+
+# prevent execution beyond this point with an endless loop
+HALT
+
+
+
+f:
+# f procedure
+# contract:
+# $ra contains the return adress
+# $a0 is the single input  register. on call it contains n
+# $v0 is the single output register. on return it contains f(n)
+
+
+BZ 	$a0, f_end	# check for recursion base case
+
+SUBI 	$sp, $sp, 2	# make place for two items on the stack
+SW 	$ra, 0, $sp	# save return address (will be overwritten by JAL)
+SW 	$a0, 1, $sp	# store n, we still need it at the end
+
+# compute f(n-1)
+SUBI 	$a0, $a0, 1 	# put n-1 in $a0
+JAL 	f		# recursive call
+
+# now f(n-1) is in $v0
+
+LW 	$t1, 1, $sp	# read n from the stack
+
+ADD 	$v0, $t1, $v0	# compute f(n) = n + f(n-1)
+
+LW 	$ra, 0, $sp	# restore the return address from the stack
+ADDI 	$sp, $sp, 2	# and restore the stack pointer
+
+RET 	$ra		# return
+
+
+f_end:			# handle the special case when n=0
+LI 	$v0, 0		# f(0) = 0
+RET 	$ra		# we can have multiple returns from a procedure

@@ -1,0 +1,39 @@
+@include "16bitCached.wasm"
+#	int A[8] [8];
+#	for( int y = 0 to 7 ){
+#		for( int x = 0 to 7 ){
+#			A [y] [x] = 8*y+x;
+		
+	
+
+
+
+# doet het nog niet helemaal
+
+.data MyRegisters : REGISTERS
+0: WORD x		0xFFFE	
+1: WORD y		0xFFF8
+2: WORD x_max 	0d8
+3: WORD y_max 	0d64
+4: WORD val
+
+.data MyData : DATAMEM
+0d0: WORD base
+
+
+.code MyCode  : HARVARD, MyData, MyRegisters
+loop1:
+	ADDI y, y, 8
+	BEQ y, y_max, end
+
+
+loop2:
+	ADDI x, x, 1
+	BEQ x, x_max, loop1
+	ADD val, x, y
+	SW val, base, val
+	BRA loop2
+end:
+	HALT
+
+

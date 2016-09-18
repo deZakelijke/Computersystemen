@@ -1,0 +1,40 @@
+@include "16bitJumper.wasm"
+
+.data MyData : REGISTERS
+@include "register_constants.wasm"
+
+.code MyCode : REGSTACK, MyData
+# the main program
+LOADI 	$arg1, 1	
+LOADI 	$arg2, 2	
+LOADI 	$arg3, 3	
+LOADI 	$arg4, 4	
+LOADI	$s1, 5
+JSR 	Add5	
+HALT		# endless loop
+
+#--------------- Add5 procedure ------------------------
+Add5:
+SUBI 	$sp,$sp,3
+SW	$ra, 2, $sp
+SW	$s1, 1, $sp
+SW	$arg4, 0, $sp
+
+JSR	Add3	# computes $val1 = $arg1 + $arg2 + $arg3
+
+COPY	$arg1, $val1
+LW	$arg2, 0, $sp
+LW	$arg3, 1, $sp
+
+JSR 	Add3	# computes $val1 = $val1 + $arg4 + $s1
+
+LW	$ra, 2, $sp
+ADDI 	$sp, $sp, 3
+
+RETURN	$ra
+
+#--------------- Add3 procedure ------------------------
+Add3:
+ADD	$val1, $arg1, $arg2
+ADD	$val1, $val1, $arg3
+RETURN	$ra

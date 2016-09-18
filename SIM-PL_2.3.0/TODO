@@ -1,0 +1,224 @@
+Updated 09-Jan-2013
+============================================================
+
+Evaluating a highlight on a complex component crashes SIM-PL with this backtrace:
+
+util.ExceptionHandler: Error: condition should not have occurred: Unimplemented method
+        at executer.Simulator$Instance_Complex.getType(Simulator.java:420)
+        at compiler.wasm.HighlightDef.<init>(HighlightDef.java:69)
+        at compiler.wasm.Pass3.highlight(Pass3.java:724)
+        at compiler.wasm.Pass3.highlight_declaration(Pass3.java:472)
+        at compiler.wasm.Pass3.processor(Pass3.java:132)
+        at compiler.wasm.Pass3.program(Pass3.java:53)
+        at compiler.wasm.WASM.compilePreprocess(WASM.java:168)
+        at compiler.wasm.WASM.compile(WASM.java:241)
+        at executer.programeditor.ProgramEditorDialog2.compile(ProgramEditorDialog2.java:713)
+        at executer.programeditor.ProgramEditorDialog2$13.actionPerformed(ProgramEditorDialog2.java:431)
+        at javax.swing.AbstractButton.fireActionPerformed(AbstractButton.java:2018)
+        at javax.swing.AbstractButton$Handler.actionPerformed(AbstractButton.java:2341)
+        at javax.swing.DefaultButtonModel.fireActionPerformed(DefaultButtonModel.java:402)
+        at javax.swing.DefaultButtonModel.setPressed(DefaultButtonModel.java:259)
+        at javax.swing.plaf.basic.BasicButtonListener.mouseReleased(BasicButtonListener.java:252)
+        at java.awt.AWTEventMulticaster.mouseReleased(AWTEventMulticaster.java:289)
+        at java.awt.Component.processMouseEvent(Component.java:6505)
+        at javax.swing.JComponent.processMouseEvent(JComponent.java:3312)
+        at java.awt.Component.processEvent(Component.java:6270)
+        at java.awt.Container.processEvent(Container.java:2229)
+        at java.awt.Component.dispatchEventImpl(Component.java:4861)
+        at java.awt.Container.dispatchEventImpl(Container.java:2287)
+        at java.awt.Component.dispatchEvent(Component.java:4687)
+        at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+        at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+        at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+        at java.awt.Container.dispatchEventImpl(Container.java:2273)
+        at java.awt.Window.dispatchEventImpl(Window.java:2713)
+        at java.awt.Component.dispatchEvent(Component.java:4687)
+        at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:717)
+        at java.awt.EventQueue.access$200(EventQueue.java:100)
+        at java.awt.EventQueue$3.run(EventQueue.java:676)
+        at java.awt.EventQueue$3.run(EventQueue.java:674)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+        at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+        at java.awt.EventQueue$4.run(EventQueue.java:690)
+        at java.awt.EventQueue$4.run(EventQueue.java:688)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+        at java.awt.EventQueue.dispatchEvent(EventQueue.java:687)
+        at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:211)
+        at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:128)
+        at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:117)
+        at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:113)
+        at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:105)
+        at java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+
+
+
+Opening a componentin the editor with a nested subcomponent in it with errors crashes SIM-PL with this backtrace:
+
+java.lang.Exception: subcomponent PCandLive has errors
+        at databinding.Complex.compile(Complex.java:195)
+        at databinding.Complex.compile(Complex.java:79)
+        at namespace.ComponentNamespace.compile(ComponentNamespace.java:184)
+        at editor.DocumentContext.recompile(DocumentContext.java:136)
+        at editor.EditorDocumentContext.recompile(EditorDocumentContext.java:166)
+        at editor.EditorDocumentContext$2.editOccured(EditorDocumentContext.java:273)
+        at editor.EditorDocumentContext$1.dispatchEvent(EditorDocumentContext.java:219)
+        at editor.EditorDocumentContext$1.dispatchEvent(EditorDocumentContext.java:217)
+        at editor.EventDispatchManager.fireEvent(EventDispatchManager.java:68)
+        at editor.EditorDocumentContext.doEdit(EditorDocumentContext.java:334)
+        at editor.EditorDocumentContext.addNodeUndoable(EditorDocumentContext.java:341)
+        at editor.tool.SubComponentTool$SubComponentLockedState.release(SubComponentTool.java:198)
+        at editor.tool.Tool.mouseReleased(Tool.java:302)
+        at editor.ComponentPanel.mouseReleased(ComponentPanel.java:366)
+        at java.awt.AWTEventMulticaster.mouseReleased(AWTEventMulticaster.java:290)
+        at java.awt.Component.processMouseEvent(Component.java:6505)
+        at javax.swing.JComponent.processMouseEvent(JComponent.java:3312)
+        at java.awt.Component.processEvent(Component.java:6270)
+        at java.awt.Container.processEvent(Container.java:2229)
+        at java.awt.Component.dispatchEventImpl(Component.java:4861)
+        at java.awt.Container.dispatchEventImpl(Container.java:2287)
+        at java.awt.Component.dispatchEvent(Component.java:4687)
+        at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4832)
+        at java.awt.LightweightDispatcher.processMouseEvent(Container.java:4492)
+        at java.awt.LightweightDispatcher.dispatchEvent(Container.java:4422)
+        at java.awt.Container.dispatchEventImpl(Container.java:2273)
+        at java.awt.Window.dispatchEventImpl(Window.java:2713)
+        at java.awt.Component.dispatchEvent(Component.java:4687)
+        at java.awt.EventQueue.dispatchEventImpl(EventQueue.java:717)
+        at java.awt.EventQueue.access$200(EventQueue.java:100)
+        at java.awt.EventQueue$3.run(EventQueue.java:676)
+        at java.awt.EventQueue$3.run(EventQueue.java:674)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+        at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:87)
+        at java.awt.EventQueue$4.run(EventQueue.java:690)
+        at java.awt.EventQueue$4.run(EventQueue.java:688)
+        at java.security.AccessController.doPrivileged(Native Method)
+        at java.security.ProtectionDomain$1.doIntersectionPrivilege(ProtectionDomain.java:76)
+        at java.awt.EventQueue.dispatchEvent(EventQueue.java:687)
+        at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:211)
+        at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:128)
+        at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:117)
+        at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:113)
+        at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:105)
+        at java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+
+
+
+When clicking a wire on a pin with the wire tool, we get this:
+Spurious drag ignored in state editor.tool.WireTool$CableDefaultState@72898110of tool editor.tool.WireTool$CableDefaultState@72898110
+Spurious release ignored in state editor.tool.WireTool$CableDefaultState@72898110of tool editor.tool.WireTool$CableDefaultState@72898110
+
+
+
+Setting, editing and unsetting of subcomponent parameters.
+
+Zoom in the component panels should be centered at the mouse cursor. Now the top-left spot stays put.
+
+Continue loading in the executer when the layout can not be restored.
+
+
+- "Open in de Ander" optie in Executer/Editor
+- Executer file-time checks + reload popup
+- ProgramEditor file-time checks + reload popup
+
+- Project encapsulatie???
+
+- Foutmeldingen van de compiler.
+
+- Cycle counter ergens prominent.
+
+- Breakpoints in de Executer
+
+- Hilights in de pipeline.
+
+- Serialisatie van de Executer layout.
+
+- Copy/paste in editor
+
+- Should probes be put in the worksheet? They really are about execution feedback, not about the components themselves. In the Executer they could be dynamically placed.
+
+
+- It is not strictly necessary to have the tree view correspond 1-1 to the XML.
+  In particular, the presentation of the wire graph in tree form is not useful.
+  Make the tree view (and also the render view selection) correspond to the user-friendly concepts.
+
+- While at it, find a nice way to declare what moves when we drag a bunch of slected objects.
+
+- Make the redraw notification more transparent (ideally completely automatic), by putting dependencies of objects on fields of other objects in the object graph (in terms of listeners receiving change notifications)
+
+- Preview components in file dialogs
+
+
+- Work around GraphicsEnvironment issues (multiple monitors)
+- First entry and subsequent editing of internals (code) differ. Make this work the same way.
+- Make shortcut keys work in their ExecuterDialog, not always in the main window.
+
+
+Exception in thread "AWT-EventQueue-0" java.lang.Error: not available
+        at editor.tool.Tool$AbortedState.move(Tool.java:758)
+        at editor.tool.Tool.mouseMoved(Tool.java:227)
+        at editor.ComponentPanel.mouseMoved(ComponentPanel.java:276)
+        at java.awt.AWTEventMulticaster.mouseMoved(AWTEventMulticaster.java:312)
+        at java.awt.Component.processMouseMotionEvent(Component.java:6086)
+        at javax.swing.JComponent.processMouseMotionEvent(JComponent.java:3283)
+        at java.awt.Component.processEvent(Component.java:5810)
+        at java.awt.Container.processEvent(Container.java:2058)
+        at java.awt.Component.dispatchEventImpl(Component.java:4413)
+        at java.awt.Container.dispatchEventImpl(Container.java:2116)
+        at java.awt.Component.dispatchEvent(Component.java:4243)
+        at java.awt.LightweightDispatcher.retargetMouseEvent(Container.java:4322)
+        at java.awt.LightweightDispatcher.processMouseEvent(Container.java:3999)
+        at java.awt.LightweightDispatcher.dispatchEvent(Container.java:3916)
+        at java.awt.Container.dispatchEventImpl(Container.java:2102)
+        at java.awt.Window.dispatchEventImpl(Window.java:2440)
+        at java.awt.Component.dispatchEvent(Component.java:4243)
+        at java.awt.EventQueue.dispatchEvent(EventQueue.java:599)
+        at java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:273)
+        at java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:183)
+        at java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:173)
+        at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:168)
+        at java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:160)
+        at java.awt.EventDispatchThread.run(EventDispatchThread.java:121)
+
+
+
+
+- Improve render speed in both Editor and Executer.
+  Especially in the Editor, this could potentially
+  lower system requirements dramatically
+
+- Being able to detach wires, and reattach them to 
+  other pins. This is especially nice for wires that
+  have become dangling because a subcomponent changed.
+  Currently, thes wires can only be extended (using a 
+  split) to a new pin, after which the dangling end must
+  be removed by hand.
+
+- Better handling of transparency.
+
+- Provide a modal progress monitor (with Cancel button) for 
+  the 'cycles ...' operation
+
+
+- Implement a C compiler
+
+- Support use of external program code editors
+
+- Shorten distance between editor/executer (single app?)
+  for faster design/test cycle
+
+- Allow _?_:_ operator in Wisent
+  Even better: support as much C as possible. This may be useful: 
+  http://antlr.org/grammar/1153358328744/C.g
+
+- Automatically compute minimum delay time for complex components (in Editor?)
+
+- make EPS dpi configurable
+
+- allow PNG pre-schaling to have a more precise PNG
+
+- allow form objects to express position relative to some other object
+  (say a text object wants the same PosY as an input or something
