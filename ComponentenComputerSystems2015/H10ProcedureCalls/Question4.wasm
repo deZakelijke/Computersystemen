@@ -1,0 +1,95 @@
+# made by Micha de Groot	
+
+@include "16bitJumper.wasm"
+
+.data MyData : DATAMEM
+0x05:   WORD        0x01
+        WORD        0x02 
+        WORD        0x03
+        WORD        0x04
+        WORD        0x05
+        WORD        0x06
+        WORD        0x07
+        WORD        0x08
+        WORD        0x09
+
+.data MyRegisters : REGISTERS
+@include "register_constants.wasm"
+
+.code MyCode : REGSTACK, MyData, MyRegisters
+LOADI   $arg1, 0x05    # address of start of vector
+LOADI   $arg2, 0x09    # length of vector
+JSR     SquareLength   # computes the square length of the vector
+HALT
+
+# ----------------------------
+# sums the square value of each element of vector arg1 of length arg2
+# val1 = SquareLength(arg1,arg2)
+# ----------------------------
+SquareLength:      
+SUBI    $sp, $sp,4         # save to stack
+SW      $ra, 3, $sp
+SW      $s1, 2, $sp
+SW      $s2, 1, $sp
+SW      $s3, 0, $sp
+
+COPY    $s1, $arg1         # s1: start address
+ADD     $s2, $arg1, $arg2  # s2: end address
+LOADI   $s3, 0             # set sum to zero at start
+
+loop:
+LW      $arg1, 0, $s1      # read next element
+ANDI    $tmp0, $arg1, 0x8000      # mask arg1 with 'negative bit'
+BEQ     $tmp0, $zero, positive    # test if 'negative bit' is set
+SUB     $arg1, $zero, $arg1       # if so make arg1 positive
+positive:
+JSR     Square             # square value of arg1 to register val1
+ADD     $s3, $s3, $val1    # add squared value to sum 
+ADDI    $s1, $s1, 1        # next address
+BNE     $s1, $s2, loop     # loop when not at end address
+COPY    $val1, $s3         # return resulting sum via val1
+
+LW      $ra, 3, $sp        # load from stack
+LW      $s1, 2, $sp
+LW      $s2, 1, $sp
+LW      $s3, 0, $sp
+ADDI    $sp, $sp, 4
+RETURN  $ra
+
+# ----------------------------
+# returns the square of arg1 
+# val1 = arg1*arg1
+# ----------------------------
+Square:
+SUBI 	$sp, $sp, 4
+SW	$ra, 3, $sp
+SW	$s1, 2, $sp
+SW	$s2, 1, $sp
+SW	$s3, 0, $sp
+
+COPY	$s1, $arg1		#Store n in sp1
+LOADI	$s2, 0		# use sp2 for temp output
+BZ	$s1, SquareReturn 	#Jump to end if n=0
+
+SHRI	$s3, $s1, 1 	#ShiftR n to x
+COPY	$arg1, $s3
+JSR	Square		#Compute the square of x
+SHLI	$s2, $val1, 2
+LOADI	$tmp1, 1		#make a mask for the if statement
+AND	$tmp2, $tmp1, $s1	
+BNE	$tmp1, $tmp2, SquareReturn	#branch if !n&1
+SHLI	$s3, $s3, 2
+ADD	$s2, $s2, $s3
+ADDI	$s2, $s2, 1
+
+SquareReturn:
+COPY	$val1, $s2
+LW	$ra, 3, $sp
+LW	$s1, 2, $sp
+LW	$s2, 1, $sp
+LW	$s3, 0, $sp
+ADDI	$sp, $sp,4
+RETURN  $ra
+
+
+
