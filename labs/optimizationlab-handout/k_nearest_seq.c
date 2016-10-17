@@ -99,8 +99,9 @@ data_t *opt_classify_MD(unsigned int lookFor, unsigned int *found) {
                         min_distance=current_distance;
                         closest_point=i;
                 }
+ 
         }
-    timer_opt_MD = timer_end(stv);
+   timer_opt_MD = timer_end(stv);
     printf("Calculation using optimized MD took: %10.6f \n", timer_opt_MD);
     *found = closest_point;
     return result;

@@ -1,0 +1,40 @@
+Assignment 5
+Micha de Groot, 10434410
+
+1. The data structure
+A complex number is defined as (a+bi) where a and b are real numbers. 
+The data structure uses the fact that we already have a nice way to represent real numbers: a float (or double). 
+A complex number would then be a tuple of two floats
+
+Addition and multiplication work in very much the same way as with real numbers.
+Adding (a+bi) and (c+di) would simply compute a+c and b+d and store them in the right part of the tuple.
+comp a = (1,2), b = (3,3), c;
+c = a+b; //(1+3,2+3)
+For multiplication we observe that (a+bi)*(c+di) = ((ac-db)+(ad+bc)i). 
+By multiplying the right values and adding and subtracting them in the way described above, we get the required product.
+comp a = (1,2), b = (3,3), c;
+c = a*b; //((1*3-2*3), (1*3+3*2))
+
+2. CPE for standard operations
+Adding two complex numbers requires two additions so the CPE of add is two.
+A multiplication requires four multiplication, one addition, and one subtraction. A total of six cycles, so a CPE of 6
+
+3. SIMD for the multiplication
+Since the multiplication of two complex numbers requires four float multiplication, computing them in parralel would be benificial. 
+However, this case is slightly different from a regular vecor multiplication. 
+Two multiplications are straightforward: (a*c) and (b*d), 
+but the other two are the first vector (a,b) multiplied by the second vector (c,d) in reverse: (a*d) and (b*c). 
+Googling showed that there was no single instruction to swap two elements. 
+It can be done with three XOR instructions but these would all have data dependecies. 
+If there was an easy way to multiply a vector with another vector in reverse, 
+all four multiplications could be done in parallel. The additions aas well.
+This would result in two cycles in total.
+But an XMM register can hold four floats, which means this can be done even better if the number of elements is even.
+The first half of the multiplications could be done first: (a*c) and (b*d) twice. 
+Then the second cycle would calculathe the other half of the multiplications.
+And the third cycle would preform all four additions simultaneously, resulting in three cycles for two instructions.
+CPE = 3/2
+
+4. SIMD for the addition
+For the addition we would just store two complex numbers in one XMM register to compute two whole additions in one cycle.
+The CPE would be 1/2
