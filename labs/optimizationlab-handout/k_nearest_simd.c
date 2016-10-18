@@ -177,33 +177,9 @@ data_t *ref_classify_ED(unsigned int lookFor, unsigned int *found) {
     struct timeval stv, etv;
     int i,closest_point=0;
     data_t min_distance,current_distance;
+    //__vector data_t
 
 	timer_start(&stv);
-	min_distance = squared_eucledean_distance(features[lookFor],features[0],FEATURE_LENGTH);
-    	result[0] = min_distance;
-	for(i=1;i<ROWS-1;i++){
-		current_distance = squared_eucledean_distance(features[lookFor],features[i],FEATURE_LENGTH);
-        result[i]=current_distance;
-		if(current_distance<min_distance){
-			min_distance=current_distance;
-			closest_point=i;
-		}
-	}
-    timer_ref_ED = timer_end(stv);
-    printf("Calculation using reference ED took: %10.6f \n", timer_ref_ED);
-    *found = closest_point;
-    return result;
-}
-
-//Modify this function
-data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
-    data_t *result =(data_t*)malloc(sizeof(data_t)*(ROWS-1));
-    struct timeval stv, etv;
-    int i,closest_point=0;
-    data_t min_distance,current_distance;
-
-	timer_start(&stv);
-    //FROM HERE
 	min_distance = squared_eucledean_distance(features[lookFor],features[0],FEATURE_LENGTH);
     	result[0] = min_distance;
 	for(i=1;i<ROWS-1;i++){
@@ -214,10 +190,113 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
 			closest_point=i;
 		}
 	}
+
+    timer_ref_ED = timer_end(stv);
+    printf("Calculation using reference ED took: %10.6f \n", timer_ref_ED);
+    *found = closest_point;
+    return result;
+}
+
+//Modify this function
+data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
+    data_t *result =(data_t*)malloc(sizeof(data_t)*(ROWS-1));
+    struct timeval stv, etv;
+    int i,j,closest_point=0, init, cnt;
+    pack_t tempVec;
+    vec_t accum, diff, zero;
+    data_t min_distance,current_distance,abs_diff_temp0, abs_diff_temp1, abs_diff_temp2, abs_diff_temp3;
+    data_t tempR0=0, tempR1=0, tempR2=0, tempR3=0, *data_x, *data_y;
+
+
+	timer_start(&stv);
+    //FROM HERE
+        min_distance = squared_eucledean_distance(features[lookFor],features[0],FEATURE_LENGTH);
+    	result[0] = min_distance;
+
+	for(i=1;i<ROWS-4;i+=4){
+            data_x = features[lookFor];
+            data_y = features[i];
+
+            for(init=0; init<VSIZE; init++){
+                tempVec.d[i] = 0;
+            }
+            accum = tempVec.v;
+            zero = accum;
+            cnt = 0;
+
+            // Try some SIMD shit
+            while(cnt <= FEATURE_LENGTH-VSIZE){
+                vec_t x0 = *((vec_t *) data_x);
+                vec_t y0 = *((vec_t *) data_y);
+
+                diff = simd_abs_diff(x0,y0);
+                accum += diff;
+
+                data_x += VSIZE;
+                data_y += VSIZE;
+                cnt += VSIZE;
+            }
+
+            // Do the remainder
+            while(cnt < FEATURE_LENGTH){
+                result[i] += fabs(*data_x - *data_y);
+                cnt++;
+                if(cnt<FEATURE_LENGTH){
+                    *data_x++,*data_y++;
+                }
+            }
+            tempVec.v = accum;
+            for(init = 0; init<VSIZE; init++){
+                result[i]+=tempVec.d[init];
+            }
+
+            printf("check%d \n",i);
+            for(j=0;j<FEATURE_LENGTH;j++){
+                //abs_diff_temp0 = fabs(features[lookFor][j]-features[i][j]);
+                abs_diff_temp1 = fabs(features[lookFor][j]-features[i+1][j]);
+                abs_diff_temp2 = fabs(features[lookFor][j]-features[i+2][j]);
+                abs_diff_temp3 = fabs(features[lookFor][j]-features[i+3][j]);
+                //tempR0+= abs_diff_temp0*abs_diff_temp0;
+                tempR1+= abs_diff_temp1*abs_diff_temp1;
+                tempR2+= abs_diff_temp2*abs_diff_temp2;
+                tempR3+= abs_diff_temp3*abs_diff_temp3;
+            }
+            //result[i] = tempR0;
+            result[i+1] = tempR1;
+            result[i+2] = tempR2;
+            result[i+3] = tempR3;
+            tempR0=0, tempR1=0, tempR2=0, tempR3=0;
+
+            if(result[i]<min_distance){
+                min_distance=result[i];
+                closest_point=i;
+            }
+            if(result[i+1]<min_distance){
+                min_distance=result[i+1];
+                closest_point=i+1;
+            }
+            if(result[i+2]<min_distance){
+                min_distance=result[i+2];
+                    closest_point=i+2;
+            }
+            if(result[i+3]<min_distance){
+                min_distance=result[i+3];
+                closest_point=i+3;
+            }
+	}
+        for (i-=ROWS%4;i<ROWS-1;i++){
+	        result[i]= squared_eucledean_distance(features[lookFor],features[i],FEATURE_LENGTH);
+           if(result[i]<min_distance){
+                min_distance=result[i];
+                closest_point=i;
+            }
+        }
+
     //TO HERE
     timer_opt_ED = timer_end(stv);
     printf("Calculation using optimized ED took: %10.6f \n", timer_opt_ED);
     *found = closest_point;
+    printf("%d\n",result);
     return result;
 }
 
@@ -278,8 +357,10 @@ typedef data_t (*(*classifying_funct)(unsigned int lookFor, unsigned int* found)
 int check_correctness(classifying_funct a, classifying_funct b, unsigned int lookFor, unsigned int *found) {
     unsigned int r=1, i, a_found, b_found;
     data_t *a_res = a(lookFor, &a_found);
+    printf("ai\n");
     data_t *b_res = b(lookFor, &b_found);
     
+    printf("ai\n");
     for(i=0;i<ROWS-1;i++)
         if(fabs(a_res[i]-b_res[i])>0.001) {
            return 0;		

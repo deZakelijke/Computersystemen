@@ -1,5 +1,5 @@
-CC		:= gcc -mavx2 -mfma 
-CFLAGS          := -O1 -w -fno-inline-functions -fno-early-inlining -fno-inline-small-functions -fno-tree-loop-optimize -fno-loop-parallelize-all 
+CC		:= gcc -mavx2 -mfma
+CFLAGS          := -O1 -w -fno-inline-functions -fno-early-inlining -fno-inline-small-functions -fno-tree-loop-optimize -fno-loop-parallelize-all
 #uncomment the following lines if running on acheron 
 #CFLAGS		:= -O1 -O1 -w -fno-inline-functions -fno-early-inlining -fno-inline-small-functions -fno-tree-loop-optimize
 #CC		:= gcc -msse3 

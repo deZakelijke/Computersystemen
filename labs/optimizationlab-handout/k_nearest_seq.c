@@ -32,12 +32,27 @@ data_t manhattan_distance(data_t *x, data_t *y, int length){
 
 data_t squared_eucledean_distance(data_t *x,data_t *y, int length){
 	data_t distance=0;
+        data_t abs_diff_xy;
+        data_t mask = 0x7FFFFFFF;
 	int i = 0;
 	for(i=0;i<length;i++){
 		distance+= mult(abs_diff(x[i],y[i]),abs_diff(x[i],y[i]));
 	}
 	return distance;
 }
+data_t squared_eucledean_distance_better(data_t *x,data_t *y, int length){
+	data_t distance=0;
+	int i = 0;
+        data_t abs_diff_xy;
+        data_t mask = 0x7FFFFFFF;
+
+	for(i=0;i<length;i++){
+                abs_diff_xy = fabs(x[i]-y[i]);
+		distance+= abs_diff_xy*abs_diff_xy;
+	}
+	return distance;
+}
+
 data_t norm(data_t *x, int length){
     data_t n = 0;
     int i=0;
@@ -99,9 +114,8 @@ data_t *opt_classify_MD(unsigned int lookFor, unsigned int *found) {
                         min_distance=current_distance;
                         closest_point=i;
                 }
- 
         }
-   timer_opt_MD = timer_end(stv);
+    timer_opt_MD = timer_end(stv);
     printf("Calculation using optimized MD took: %10.6f \n", timer_opt_MD);
     *found = closest_point;
     return result;
@@ -135,21 +149,88 @@ data_t *ref_classify_ED(unsigned int lookFor, unsigned int *found) {
 data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
     data_t *result =(data_t*)malloc(sizeof(data_t)*(ROWS-1));
     struct timeval stv, etv;
-    int i,closest_point=0;
-    data_t min_distance,current_distance;
+    int i,j,closest_point=0, mask = 0x7FFFFFFF; 
+    data_t min_distance, abs_diff_temp0, abs_diff_temp1, abs_diff_temp2, abs_diff_temp3;
+    data_t tempR0=0, tempR1=0, tempR2=0, tempR3=0;
 
+    /* not used, but variable still present in code that is not used
+    int tmp_cl=0;
+    data_t temp_min;
+    */
 	timer_start(&stv);
     //FROM HERE
-	min_distance = squared_eucledean_distance(features[lookFor],features[0],FEATURE_LENGTH);
+	min_distance = squared_eucledean_distance_better(features[lookFor],features[0],FEATURE_LENGTH);
     	result[0] = min_distance;
-	for(i=1;i<ROWS-1;i++){
-		current_distance = squared_eucledean_distance(features[lookFor],features[i],FEATURE_LENGTH);
-        	result[i]=current_distance;
-		if(current_distance<min_distance){
-			min_distance=current_distance;
+	for(i=1;i<ROWS-4;i+=4){
+                for(j=0;j<FEATURE_LENGTH;j++){
+                    abs_diff_temp0 = fabs(features[lookFor][j]-features[i][j]);
+                    //abs_diff_temp = data_t*((int(features[lookFor][j]-features[i][j])&mask));
+                    abs_diff_temp1 = fabs(features[lookFor][j]-features[i+1][j]);
+                    abs_diff_temp2 = fabs(features[lookFor][j]-features[i+2][j]);
+                    abs_diff_temp3 = fabs(features[lookFor][j]-features[i+3][j]);
+		    tempR0+= abs_diff_temp0*abs_diff_temp0;
+		    tempR1+= abs_diff_temp1*abs_diff_temp1;
+		    tempR2+= abs_diff_temp2*abs_diff_temp2;
+		    tempR3+= abs_diff_temp3*abs_diff_temp3;
+	        }
+                result[i] = tempR0;
+                result[i+1] = tempR1;
+                result[i+2] = tempR2;
+                result[i+3] = tempR3;
+                tempR0=0, tempR1=0, tempR2=0, tempR3=0;
+		//result[i]=squared_eucledean_distance_better(features[lookFor],features[i],FEATURE_LENGTH);
+                /*
+                if(result[i]<result[i+1]){
+                    temp_min = result[i];
+                    closest_point = i;
+                    tmp_cl = i;
+                }else{
+                    temp_min = result[i+1];
+                    closest_point = i+1;
+                    tmp_cl = i+1;
+                }
+                if(result[i+2]<min_distance){
+                    min_distance = result[i+2];
+                    closest_point = i+2;
+                }
+                if(result[i+3]<temp_min){
+                    temp_min = result[i+3];
+                    tmp_cl = i+3;
+                }
+                if(temp_min<min_distance){
+                    min_distance = temp_min;
+                    closest_point = tmp_cl;
+                }
+                */
+		if(result[i]<min_distance){
+			min_distance=result[i];
 			closest_point=i;
 		}
+		if(result[i+1]<min_distance){
+			min_distance=result[i+1];
+			closest_point=i+1;
+		}
+		if(result[i+2]<min_distance){
+			min_distance=result[i+2];
+			closest_point=i+2;
+		}
+		if(result[i+3]<min_distance){
+			min_distance=result[i+3];
+			closest_point=i+3;
+		}
 	}
+        for (i-=ROWS%4;i<ROWS-1;i++){
+                result[i] = 0;
+                for(j=0;j<FEATURE_LENGTH;j++){
+                    abs_diff_temp0 = fabs(features[lookFor][j]-features[i][j]);
+		    result[i]+= abs_diff_temp0*abs_diff_temp0;
+                }
+		//result[i]= squared_eucledean_distance_better(features[lookFor],features[i],FEATURE_LENGTH);
+		if(result[i]<min_distance){
+			min_distance=result[i];
+			closest_point=i;
+		}
+        }
     //TO HERE
     timer_opt_ED = timer_end(stv);
     printf("Calculation using optimized ED took: %10.6f \n", timer_opt_ED);
