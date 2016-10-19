@@ -150,8 +150,13 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
     data_t *result =(data_t*)malloc(sizeof(data_t)*(ROWS-1));
     struct timeval stv, etv;
     int i,j,closest_point=0, mask = 0x7FFFFFFF; 
-    data_t min_distance, abs_diff_temp0, abs_diff_temp1, abs_diff_temp2, abs_diff_temp3;
+    data_t min_distance;
+    data_t abs_diff_temp0, abs_diff_temp1, abs_diff_temp2, abs_diff_temp3;
+    data_t abs_diff_temp4, abs_diff_temp5, abs_diff_temp6, abs_diff_temp7;
+    data_t abs_diff_temp8, abs_diff_temp9, abs_diff_temp10;
     data_t tempR0=0, tempR1=0, tempR2=0, tempR3=0;
+    data_t tempR4=0, tempR5=0, tempR6=0, tempR7=0;
+    data_t tempR8=0, tempR9=0, tempR10=0;
 
     /* not used, but variable still present in code that is not used
     int tmp_cl=0;
@@ -161,23 +166,73 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
     //FROM HERE
 	min_distance = squared_eucledean_distance_better(features[lookFor],features[0],FEATURE_LENGTH);
     	result[0] = min_distance;
-	for(i=1;i<ROWS-4;i+=4){
-                for(j=0;j<FEATURE_LENGTH;j++){
+	for(i=0;i<ROWS-7;i+=7){
+                for(j=0;j<FEATURE_LENGTH;j+=2){
+                    // Tried to eliminate fabs() by using a bitwise operation.
+                    //abs_diff_temp = data_t*((int(features[lookFor][j]-features[i][j])&mask)); 
                     abs_diff_temp0 = fabs(features[lookFor][j]-features[i][j]);
-                    //abs_diff_temp = data_t*((int(features[lookFor][j]-features[i][j])&mask));
                     abs_diff_temp1 = fabs(features[lookFor][j]-features[i+1][j]);
                     abs_diff_temp2 = fabs(features[lookFor][j]-features[i+2][j]);
                     abs_diff_temp3 = fabs(features[lookFor][j]-features[i+3][j]);
-		    tempR0+= abs_diff_temp0*abs_diff_temp0;
+	            abs_diff_temp4 = fabs(features[lookFor][j]-features[i+4][j]);
+                    abs_diff_temp5 = fabs(features[lookFor][j]-features[i+5][j]);
+                    abs_diff_temp6 = fabs(features[lookFor][j]-features[i+6][j]);
+
+
+                    /*
+                    Tried to unroll to 11
+                    abs_diff_temp7 = fabs(features[lookFor][j]-features[i+7][j]);
+                    abs_diff_temp8 = fabs(features[lookFor][j]-features[i+8][j]);
+                    abs_diff_temp9 = fabs(features[lookFor][j]-features[i+9][j]);
+                    abs_diff_temp10 = fabs(features[lookFor][j]-features[i+10][j]);
+                    */
+                    tempR0+= abs_diff_temp0*abs_diff_temp0;
 		    tempR1+= abs_diff_temp1*abs_diff_temp1;
 		    tempR2+= abs_diff_temp2*abs_diff_temp2;
 		    tempR3+= abs_diff_temp3*abs_diff_temp3;
+                    tempR4+= abs_diff_temp4*abs_diff_temp4;
+                    tempR5+= abs_diff_temp5*abs_diff_temp5;
+		    tempR6+= abs_diff_temp6*abs_diff_temp6;
+                    /*
+		    tempR7+= abs_diff_temp7*abs_diff_temp7;
+                    tempR8+= abs_diff_temp8*abs_diff_temp8;
+		    tempR9+= abs_diff_temp9*abs_diff_temp9;
+		    tempR10+= abs_diff_temp10*abs_diff_temp10;
+                    */
+
+                    // Unroll the inner loop
+                    abs_diff_temp0 = fabs(features[lookFor][j+1]-features[i][j+1]);
+                    abs_diff_temp1 = fabs(features[lookFor][j+1]-features[i+1][j+1]);
+                    abs_diff_temp2 = fabs(features[lookFor][j+1]-features[i+2][j+1]);
+                    abs_diff_temp3 = fabs(features[lookFor][j+1]-features[i+3][j+1]);
+	            abs_diff_temp4 = fabs(features[lookFor][j+1]-features[i+4][j+1]);
+                    abs_diff_temp5 = fabs(features[lookFor][j+1]-features[i+5][j+1]);
+                    abs_diff_temp6 = fabs(features[lookFor][j+1]-features[i+6][j+1]);
+                    tempR0+= abs_diff_temp0*abs_diff_temp0;
+		    tempR1+= abs_diff_temp1*abs_diff_temp1;
+		    tempR2+= abs_diff_temp2*abs_diff_temp2;
+		    tempR3+= abs_diff_temp3*abs_diff_temp3;
+                    tempR4+= abs_diff_temp4*abs_diff_temp4;
+                    tempR5+= abs_diff_temp5*abs_diff_temp5;
+		    tempR6+= abs_diff_temp6*abs_diff_temp6;
+
 	        }
                 result[i] = tempR0;
                 result[i+1] = tempR1;
                 result[i+2] = tempR2;
                 result[i+3] = tempR3;
+                result[i+4] = tempR4;
+                result[i+5] = tempR5;
+                result[i+6] = tempR6;
+                /*
+                result[i+7] = tempR7;
+                result[i+8] = tempR8;
+                result[i+9] = tempR9;
+                result[i+10] = tempR10;
+                */
                 tempR0=0, tempR1=0, tempR2=0, tempR3=0;
+                tempR4=0, tempR5=0, tempR6=0;
+                tempR7=0, tempR8=0, tempR9=0, tempR10=0;
 		//result[i]=squared_eucledean_distance_better(features[lookFor],features[i],FEATURE_LENGTH);
                 /*
                 if(result[i]<result[i+1]){
@@ -202,7 +257,7 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
                     closest_point = tmp_cl;
                 }
                 */
-		if(result[i]<min_distance){
+                if(result[i]<min_distance){
 			min_distance=result[i];
 			closest_point=i;
 		}
@@ -218,8 +273,41 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
 			min_distance=result[i+3];
 			closest_point=i+3;
 		}
+                if(result[i+4]<min_distance){
+			min_distance=result[i+4];
+			closest_point=i+4;
+		}
+		if(result[i+5]<min_distance){
+			min_distance=result[i+5];
+			closest_point=i+5;
+		}
+		if(result[i+6]<min_distance){
+			min_distance=result[i+6];
+			closest_point=i+6;
+		}
+                /*
+		if(result[i+7]<min_distance){
+			min_distance=result[i+7];
+			closest_point=i+7;
+		}
+		if(result[i+8]<min_distance){
+			min_distance=result[i+8];
+			closest_point=i+8;
+		}
+		if(result[i+9]<min_distance){
+			min_distance=result[i+9];
+			closest_point=i+9;
+		}
+		if(result[i+10]<min_distance){
+			min_distance=result[i+10];
+			closest_point=i+10;
+		}
+                */
 	}
-        for (i-=ROWS%4;i<ROWS-1;i++){
+        /*
+        printf("i: %d\n",i);
+        for (i-=(ROWS%11)-1;i<ROWS-1;i++){
+            printf("i: %d\n",i);
                 result[i] = 0;
                 for(j=0;j<FEATURE_LENGTH;j++){
                     abs_diff_temp0 = fabs(features[lookFor][j]-features[i][j]);
@@ -231,6 +319,7 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
 			closest_point=i;
 		}
         }
+        */
     //TO HERE
     timer_opt_ED = timer_end(stv);
     printf("Calculation using optimized ED took: %10.6f \n", timer_opt_ED);

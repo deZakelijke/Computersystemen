@@ -60,6 +60,8 @@ data_t simd_manhattan_distance(data_t *x, data_t *y, int length){
     vec_t accum, diff, zero;
     data_t result=0;
     data_t *data_x=x;
+    //printf("x funct: %d\n",*data_x);
+    //printf("funct in: %d\n", *x);
     data_t *data_y=y;
 
     /* Initialize accum to 0 */
@@ -210,13 +212,11 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
 
 	timer_start(&stv);
     //FROM HERE
-        min_distance = squared_eucledean_distance(features[lookFor],features[0],FEATURE_LENGTH);
+        //min_distance = squared_eucledean_distance(features[lookFor],features[0],FEATURE_LENGTH);
+        min_distance = simd_manhattan_distance(features[lookFor],features[0],FEATURE_LENGTH);
     	result[0] = min_distance;
 
 	for(i=1;i<ROWS-4;i+=4){
-            data_x = features[lookFor];
-            data_y = features[i];
-
             for(init=0; init<VSIZE; init++){
                 tempVec.d[i] = 0;
             }
@@ -242,7 +242,7 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
                 result[i] += fabs(*data_x - *data_y);
                 cnt++;
                 if(cnt<FEATURE_LENGTH){
-                    *data_x++,*data_y++;
+                    *data_x++, *data_y++;
                 }
             }
             tempVec.v = accum;
@@ -250,7 +250,7 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
                 result[i]+=tempVec.d[init];
             }
 
-            printf("check%d \n",i);
+            //printf("check%d \n",i);
             for(j=0;j<FEATURE_LENGTH;j++){
                 //abs_diff_temp0 = fabs(features[lookFor][j]-features[i][j]);
                 abs_diff_temp1 = fabs(features[lookFor][j]-features[i+1][j]);
@@ -357,7 +357,6 @@ typedef data_t (*(*classifying_funct)(unsigned int lookFor, unsigned int* found)
 int check_correctness(classifying_funct a, classifying_funct b, unsigned int lookFor, unsigned int *found) {
     unsigned int r=1, i, a_found, b_found;
     data_t *a_res = a(lookFor, &a_found);
-    printf("ai\n");
     data_t *b_res = b(lookFor, &b_found);
     
     printf("ai\n");
