@@ -60,8 +60,6 @@ data_t simd_manhattan_distance(data_t *x, data_t *y, int length){
     vec_t accum, diff, zero;
     data_t result=0;
     data_t *data_x=x;
-    //printf("x funct: %d\n",*data_x);
-    //printf("funct in: %d\n", *x);
     data_t *data_y=y;
 
     /* Initialize accum to 0 */
@@ -69,10 +67,12 @@ data_t simd_manhattan_distance(data_t *x, data_t *y, int length){
         temp.d[i] = 0;
     }
     accum = temp.v;
+    // What is the use of this variable?
     zero = accum;
     cnt = 0;
 
     /* SIMD */
+    // Why use a while loop?
     while (cnt <= length-VSIZE) {
         vec_t x0 = *((vec_t *) data_x);
         vec_t y0 = *((vec_t *) data_y);
@@ -88,6 +88,7 @@ data_t simd_manhattan_distance(data_t *x, data_t *y, int length){
     while (cnt < length) {
         result += fabs(*data_x - *data_y);
 	cnt++; 
+        // What does this if satement do?
 	if (cnt<length) 
        		*data_x++; *data_y++;
     }
@@ -105,6 +106,45 @@ data_t squared_eucledean_distance(data_t *x,data_t *y, int length){
 	}
 	return distance;
 }
+
+// Edited SED function for SIMD
+data_t squared_eucledean_distance_SIMD(data_t *x,data_t *y, int length){
+	int i = 0;
+        pack_t tempVec;
+        vec_t diff;
+        data_t *data_x = x, *data_y = y, result=0, abs_temp;
+
+
+        for(i=0;i< VSIZE; i++){
+            tempVec.d[i] = 0;
+        }
+
+        for(i=0;i<=length-VSIZE;i+=VSIZE){
+            vec_t x0 = *((vec_t *) data_x);
+            vec_t y0 = *((vec_t *) data_y);
+            diff = simd_abs_diff(x0, y0);
+            diff = diff* diff;
+            tempVec.v += diff;
+            data_x += VSIZE;
+            data_y += VSIZE;
+        }
+
+        // remainder
+        /*
+        for( ;i<length; i++){
+            printf("i\n");
+            abs_temp = fabs(*data_x - *data_y);
+            result += abs_temp * abs_temp;
+            *data_x++;
+            *data_y++;
+        }
+        */
+        for(i=0;i<VSIZE;i++){
+            result += tempVec.d[i];
+        }
+	return result;
+}
+
 data_t norm(data_t *x, int length){
     data_t n = 0;
     int i=0;
@@ -212,91 +252,22 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
 
 	timer_start(&stv);
     //FROM HERE
-        //min_distance = squared_eucledean_distance(features[lookFor],features[0],FEATURE_LENGTH);
-        min_distance = simd_manhattan_distance(features[lookFor],features[0],FEATURE_LENGTH);
+        min_distance = squared_eucledean_distance_SIMD(features[lookFor],features[0],FEATURE_LENGTH);
     	result[0] = min_distance;
 
-	for(i=1;i<ROWS-4;i+=4){
-            for(init=0; init<VSIZE; init++){
-                tempVec.d[i] = 0;
-            }
-            accum = tempVec.v;
-            zero = accum;
-            cnt = 0;
-
-            // Try some SIMD shit
-            while(cnt <= FEATURE_LENGTH-VSIZE){
-                vec_t x0 = *((vec_t *) data_x);
-                vec_t y0 = *((vec_t *) data_y);
-
-                diff = simd_abs_diff(x0,y0);
-                accum += diff;
-
-                data_x += VSIZE;
-                data_y += VSIZE;
-                cnt += VSIZE;
-            }
-
-            // Do the remainder
-            while(cnt < FEATURE_LENGTH){
-                result[i] += fabs(*data_x - *data_y);
-                cnt++;
-                if(cnt<FEATURE_LENGTH){
-                    *data_x++, *data_y++;
-                }
-            }
-            tempVec.v = accum;
-            for(init = 0; init<VSIZE; init++){
-                result[i]+=tempVec.d[init];
-            }
-
-            //printf("check%d \n",i);
-            for(j=0;j<FEATURE_LENGTH;j++){
-                //abs_diff_temp0 = fabs(features[lookFor][j]-features[i][j]);
-                abs_diff_temp1 = fabs(features[lookFor][j]-features[i+1][j]);
-                abs_diff_temp2 = fabs(features[lookFor][j]-features[i+2][j]);
-                abs_diff_temp3 = fabs(features[lookFor][j]-features[i+3][j]);
-                //tempR0+= abs_diff_temp0*abs_diff_temp0;
-                tempR1+= abs_diff_temp1*abs_diff_temp1;
-                tempR2+= abs_diff_temp2*abs_diff_temp2;
-                tempR3+= abs_diff_temp3*abs_diff_temp3;
-            }
-            //result[i] = tempR0;
-            result[i+1] = tempR1;
-            result[i+2] = tempR2;
-            result[i+3] = tempR3;
-            tempR0=0, tempR1=0, tempR2=0, tempR3=0;
-
-            if(result[i]<min_distance){
-                min_distance=result[i];
-                closest_point=i;
-            }
-            if(result[i+1]<min_distance){
-                min_distance=result[i+1];
-                closest_point=i+1;
-            }
-            if(result[i+2]<min_distance){
-                min_distance=result[i+2];
-                    closest_point=i+2;
-            }
-            if(result[i+3]<min_distance){
-                min_distance=result[i+3];
-                closest_point=i+3;
-            }
-	}
-        for (i-=ROWS%4;i<ROWS-1;i++){
-	        result[i]= squared_eucledean_distance(features[lookFor],features[i],FEATURE_LENGTH);
-           if(result[i]<min_distance){
-                min_distance=result[i];
-                closest_point=i;
-            }
+        for(i=1;i<ROWS-1;i++){
+	    current_distance = squared_eucledean_distance_SIMD(features[lookFor],features[i],FEATURE_LENGTH);
+            result[i]=current_distance;
+	    if(current_distance<min_distance){
+		min_distance=current_distance;
+		closest_point=i;
+	    }
         }
 
     //TO HERE
     timer_opt_ED = timer_end(stv);
     printf("Calculation using optimized ED took: %10.6f \n", timer_opt_ED);
     *found = closest_point;
-    printf("%d\n",result);
     return result;
 }
 
@@ -359,7 +330,6 @@ int check_correctness(classifying_funct a, classifying_funct b, unsigned int loo
     data_t *a_res = a(lookFor, &a_found);
     data_t *b_res = b(lookFor, &b_found);
     
-    printf("ai\n");
     for(i=0;i<ROWS-1;i++)
         if(fabs(a_res[i]-b_res[i])>0.001) {
            return 0;		

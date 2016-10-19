@@ -167,7 +167,7 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
 	min_distance = squared_eucledean_distance_better(features[lookFor],features[0],FEATURE_LENGTH);
     	result[0] = min_distance;
 	for(i=0;i<ROWS-7;i+=7){
-                for(j=0;j<FEATURE_LENGTH;j+=2){
+                for(j=0;j<FEATURE_LENGTH;j+=4){
                     // Tried to eliminate fabs() by using a bitwise operation.
                     //abs_diff_temp = data_t*((int(features[lookFor][j]-features[i][j])&mask)); 
                     abs_diff_temp0 = fabs(features[lookFor][j]-features[i][j]);
@@ -208,6 +208,34 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
 	            abs_diff_temp4 = fabs(features[lookFor][j+1]-features[i+4][j+1]);
                     abs_diff_temp5 = fabs(features[lookFor][j+1]-features[i+5][j+1]);
                     abs_diff_temp6 = fabs(features[lookFor][j+1]-features[i+6][j+1]);
+                    tempR0+= abs_diff_temp0*abs_diff_temp0;
+		    tempR1+= abs_diff_temp1*abs_diff_temp1;
+		    tempR2+= abs_diff_temp2*abs_diff_temp2;
+		    tempR3+= abs_diff_temp3*abs_diff_temp3;
+                    tempR4+= abs_diff_temp4*abs_diff_temp4;
+                    tempR5+= abs_diff_temp5*abs_diff_temp5;
+		    tempR6+= abs_diff_temp6*abs_diff_temp6;
+                    abs_diff_temp0 = fabs(features[lookFor][j+2]-features[i][j+2]);
+                    abs_diff_temp1 = fabs(features[lookFor][j+2]-features[i+1][j+2]);
+                    abs_diff_temp2 = fabs(features[lookFor][j+2]-features[i+2][j+2]);
+                    abs_diff_temp3 = fabs(features[lookFor][j+2]-features[i+3][j+2]);
+	            abs_diff_temp4 = fabs(features[lookFor][j+2]-features[i+4][j+2]);
+                    abs_diff_temp5 = fabs(features[lookFor][j+2]-features[i+5][j+2]);
+                    abs_diff_temp6 = fabs(features[lookFor][j+2]-features[i+6][j+2]);
+                    tempR0+= abs_diff_temp0*abs_diff_temp0;
+		    tempR1+= abs_diff_temp1*abs_diff_temp1;
+		    tempR2+= abs_diff_temp2*abs_diff_temp2;
+		    tempR3+= abs_diff_temp3*abs_diff_temp3;
+                    tempR4+= abs_diff_temp4*abs_diff_temp4;
+                    tempR5+= abs_diff_temp5*abs_diff_temp5;
+		    tempR6+= abs_diff_temp6*abs_diff_temp6;
+                    abs_diff_temp0 = fabs(features[lookFor][j+3]-features[i][j+3]);
+                    abs_diff_temp1 = fabs(features[lookFor][j+3]-features[i+1][j+3]);
+                    abs_diff_temp2 = fabs(features[lookFor][j+3]-features[i+2][j+3]);
+                    abs_diff_temp3 = fabs(features[lookFor][j+3]-features[i+3][j+3]);
+	            abs_diff_temp4 = fabs(features[lookFor][j+3]-features[i+4][j+3]);
+                    abs_diff_temp5 = fabs(features[lookFor][j+3]-features[i+5][j+3]);
+                    abs_diff_temp6 = fabs(features[lookFor][j+3]-features[i+6][j+3]);
                     tempR0+= abs_diff_temp0*abs_diff_temp0;
 		    tempR1+= abs_diff_temp1*abs_diff_temp1;
 		    tempR2+= abs_diff_temp2*abs_diff_temp2;
@@ -305,7 +333,7 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
                 */
 	}
         /*
-        printf("i: %d\n",i);
+        Used to wrap up the unrolled loop
         for (i-=(ROWS%11)-1;i<ROWS-1;i++){
             printf("i: %d\n",i);
                 result[i] = 0;
