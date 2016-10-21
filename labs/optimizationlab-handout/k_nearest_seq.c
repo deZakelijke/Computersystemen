@@ -33,7 +33,6 @@ data_t manhattan_distance(data_t *x, data_t *y, int length){
 data_t squared_eucledean_distance(data_t *x,data_t *y, int length){
 	data_t distance=0;
         data_t abs_diff_xy;
-        data_t mask = 0x7FFFFFFF;
 	int i = 0;
 	for(i=0;i<length;i++){
 		distance+= mult(abs_diff(x[i],y[i]),abs_diff(x[i],y[i]));
@@ -44,7 +43,6 @@ data_t squared_eucledean_distance_better(data_t *x,data_t *y, int length){
 	data_t distance=0;
 	int i = 0;
         data_t abs_diff_xy;
-        data_t mask = 0x7FFFFFFF;
 
 	for(i=0;i<length;i++){
                 abs_diff_xy = fabs(x[i]-y[i]);
@@ -64,12 +62,26 @@ data_t norm(data_t *x, int length){
 }
 
 data_t cosine_similarity(data_t *x, data_t *y, int length){
-    data_t sim=0;
+    data_t sim=0, norm_x=0, norm_y=0;
     int i=0;
     for(i=0;i<length;i++){
         sim += mult(x[i],y[i]);
     }
     sim = sim / mult(norm(x,FEATURE_LENGTH),norm(y,FEATURE_LENGTH));
+    return sim;
+}
+
+// New funtion
+data_t cosine_similarity_better(data_t *x, data_t *y, int length, data_t norm_x){
+    data_t sim=0, norm_y=0;
+    int i=0;
+    for(i=0;i<length;i++){
+        sim += x[i]*y[i];
+        norm_y += y[i]*y[i];
+    }
+    norm_y = sqrt(norm_y);
+    //sim = sim / mult(norm(x,FEATURE_LENGTH),norm(y,FEATURE_LENGTH));
+    sim = sim  / (norm_x * norm_y);
     return sim;
 }
 
@@ -384,20 +396,151 @@ data_t *ref_classify_CS(unsigned int lookFor, unsigned int* found) {
 data_t *opt_classify_CS(unsigned int lookFor, unsigned int *found) {
     data_t *result =(data_t*)malloc(sizeof(data_t)*(ROWS-1));
     struct timeval stv, etv;
-    int i,closest_point=0;
-    data_t min_distance,current_distance;
+    int i, j, closest_point=0;
+    data_t min_distance,temp_dist0, temp_dist1, temp_dist2, temp_dist3, temp_dist4, temp_dist5, temp_dist6;
+    data_t feat_norm=0;
+    data_t temp_sim0, temp_sim1, temp_sim2, temp_sim3, temp_sim4, temp_sim5, temp_sim6;
+    data_t temp_norm0, temp_norm1, temp_norm2, temp_norm3, temp_norm4, temp_norm5, temp_norm6;
 
     timer_start(&stv);
 
     //MODIFY FROM HERE
-	min_distance = cosine_similarity(features[lookFor],features[0],FEATURE_LENGTH);
+        for(i=0;i< FEATURE_LENGTH; i++){
+            feat_norm += features[lookFor][i] * features[lookFor][i];
+        }
+        feat_norm = sqrt(feat_norm);
+
+	min_distance = cosine_similarity_better(features[lookFor],features[0],FEATURE_LENGTH, feat_norm);
     	result[0] = min_distance;
-	for(i=1;i<ROWS-1;i++) {
-		current_distance = cosine_similarity(features[lookFor],features[i],FEATURE_LENGTH);
-        	result[i]=current_distance;
-		if(current_distance<min_distance){
-			min_distance=current_distance;
+	for(i=0;i<ROWS-7;i+=7) {
+                temp_sim0=0, temp_sim1=0, temp_sim2=0, temp_sim3=0;
+                temp_sim4=0, temp_sim5=0, temp_sim6=0;
+                temp_norm0=0, temp_norm1=0, temp_norm2=0, temp_norm3=0;
+                temp_norm4=0, temp_norm5=0, temp_norm6=0;
+
+                for(j=0;j<FEATURE_LENGTH-3;j+=4){
+                    temp_sim0 += features[lookFor][j] * features[i][j];
+                    temp_norm0 += features[i][j] * features[i][j];
+                    temp_sim1 += features[lookFor][j] * features[i+1][j];
+                    temp_norm1 += features[i+1][j] * features[i+1][j];
+                    temp_sim2 += features[lookFor][j] * features[i+2][j];
+                    temp_norm2 += features[i+2][j] * features[i+2][j];
+                    temp_sim3 += features[lookFor][j] * features[i+3][j];
+                    temp_norm3 += features[i+3][j] * features[i+3][j];
+                    temp_sim4 += features[lookFor][j] * features[i+4][j];
+                    temp_norm4 += features[i+4][j] * features[i+4][j];
+                    temp_sim5 += features[lookFor][j] * features[i+5][j];
+                    temp_norm5 += features[i+5][j] * features[i+5][j];
+                    temp_sim6 += features[lookFor][j] * features[i+6][j];
+                    temp_norm6 += features[i+6][j] * features[i+6][j];
+                    
+                    temp_sim0 += features[lookFor][j+1] * features[i][j+1];
+                    temp_norm0 += features[i][j+1] * features[i][j+1];
+                    temp_sim1 += features[lookFor][j+1] * features[i+1][j+1];
+                    temp_norm1 += features[i+1][j+1] * features[i+1][j+1];
+                    temp_sim2 += features[lookFor][j+1] * features[i+2][j+1];
+                    temp_norm2 += features[i+2][j+1] * features[i+2][j+1];
+                    temp_sim3 += features[lookFor][j+1] * features[i+3][j+1];
+                    temp_norm3 += features[i+3][j+1] * features[i+3][j+1];
+                    temp_sim4 += features[lookFor][j+1] * features[i+4][j+1];
+                    temp_norm4 += features[i+4][j+1] * features[i+4][j+1];
+                    temp_sim5 += features[lookFor][j+1] * features[i+5][j+1];
+                    temp_norm5 += features[i+5][j+1] * features[i+5][j+1];
+                    temp_sim6 += features[lookFor][j+1] * features[i+6][j+1];
+                    temp_norm6 += features[i+6][j+1] * features[i+6][j+1];
+
+                    temp_sim0 += features[lookFor][j+2] * features[i][j+2];
+                    temp_norm0 += features[i][j+2] * features[i][j+2];
+                    temp_sim1 += features[lookFor][j+2] * features[i+1][j+2];
+                    temp_norm1 += features[i+1][j+2] * features[i+1][j+2];
+                    temp_sim2 += features[lookFor][j+2] * features[i+2][j+2];
+                    temp_norm2 += features[i+2][j+2] * features[i+2][j+2];
+                    temp_sim3 += features[lookFor][j+2] * features[i+3][j+2];
+                    temp_norm3 += features[i+3][j+2] * features[i+3][j+2];
+                    temp_sim4 += features[lookFor][j+2] * features[i+4][j+2];
+                    temp_norm4 += features[i+4][j+2] * features[i+4][j+2];
+                    temp_sim5 += features[lookFor][j+2] * features[i+5][j+2];
+                    temp_norm5 += features[i+5][j+2] * features[i+5][j+2];
+                    temp_sim6 += features[lookFor][j+2] * features[i+6][j+2];
+                    temp_norm6 += features[i+6][j+2] * features[i+6][j+2];
+
+                    temp_sim0 += features[lookFor][j+3] * features[i][j+3];
+                    temp_norm0 += features[i][j+3] * features[i][j+3];
+                    temp_sim1 += features[lookFor][j+3] * features[i+1][j+3];
+                    temp_norm1 += features[i+1][j+3] * features[i+1][j+3];
+                    temp_sim2 += features[lookFor][j+3] * features[i+2][j+3];
+                    temp_norm2 += features[i+2][j+3] * features[i+2][j+3];
+                    temp_sim3 += features[lookFor][j+3] * features[i+3][j+3];
+                    temp_norm3 += features[i+3][j+3] * features[i+3][j+3];
+                    temp_sim4 += features[lookFor][j+3] * features[i+4][j+3];
+                    temp_norm4 += features[i+4][j+3] * features[i+4][j+3];
+                    temp_sim5 += features[lookFor][j+3] * features[i+5][j+3];
+                    temp_norm5 += features[i+5][j+3] * features[i+5][j+3];
+                    temp_sim6 += features[lookFor][j+3] * features[i+6][j+3];
+                    temp_norm6 += features[i+6][j+3] * features[i+6][j+3];
+
+                }
+                temp_norm0 = sqrt(temp_norm0);
+                temp_dist0 = temp_sim0 / (feat_norm * temp_norm0);
+                temp_norm1 = sqrt(temp_norm1);
+                temp_dist1 = temp_sim1 / (feat_norm * temp_norm1);
+                temp_norm2 = sqrt(temp_norm2);
+                temp_dist2 = temp_sim2 / (feat_norm * temp_norm2);
+                temp_norm3 = sqrt(temp_norm3);
+                temp_dist3 = temp_sim3 / (feat_norm * temp_norm3);
+                temp_norm4 = sqrt(temp_norm4);
+                temp_dist4 = temp_sim4 / (feat_norm * temp_norm4);
+                temp_norm5 = sqrt(temp_norm5);
+                temp_dist5 = temp_sim5 / (feat_norm * temp_norm5);
+                temp_norm6 = sqrt(temp_norm6);
+                temp_dist6 = temp_sim6 / (feat_norm * temp_norm6);
+
+		/*
+                temp_dist0 = cosine_similarity_better(features[lookFor],features[i],FEATURE_LENGTH, feat_norm);
+		temp_dist1 = cosine_similarity_better(features[lookFor],features[i+1],FEATURE_LENGTH, feat_norm);
+		temp_dist2 = cosine_similarity_better(features[lookFor],features[i+2],FEATURE_LENGTH, feat_norm);
+		temp_dist3 = cosine_similarity_better(features[lookFor],features[i+3],FEATURE_LENGTH, feat_norm);
+		temp_dist4 = cosine_similarity_better(features[lookFor],features[i+4],FEATURE_LENGTH, feat_norm);
+		temp_dist5 = cosine_similarity_better(features[lookFor],features[i+5],FEATURE_LENGTH, feat_norm);
+		temp_dist6 = cosine_similarity_better(features[lookFor],features[i+6],FEATURE_LENGTH, feat_norm);
+                */
+
+        	result[i]=temp_dist0;
+        	result[i+1]=temp_dist1;
+        	result[i+2]=temp_dist2;
+        	result[i+3]=temp_dist3;
+        	result[i+4]=temp_dist4;
+        	result[i+5]=temp_dist5;
+        	result[i+6]=temp_dist6;
+
+
+		if(temp_dist0<min_distance){
+			min_distance=temp_dist0;
 			closest_point=i;
+		}
+		if(temp_dist1<min_distance){
+			min_distance=temp_dist1;
+			closest_point=i+1;
+		}
+		if(temp_dist2<min_distance){
+			min_distance=temp_dist2;
+			closest_point=i+2;
+		}
+		if(temp_dist3<min_distance){
+			min_distance=temp_dist3;
+			closest_point=i+3;
+		}
+		if(temp_dist4<min_distance){
+			min_distance=temp_dist4;
+			closest_point=i+4;
+		}
+		if(temp_dist5<min_distance){
+			min_distance=temp_dist5;
+			closest_point=i+5;
+		}
+		if(temp_dist6<min_distance){
+			min_distance=temp_dist6;
+			closest_point=i+6;
 		}
 	}
     //TO HERE

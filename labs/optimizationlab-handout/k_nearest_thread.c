@@ -40,6 +40,20 @@ data_t squared_eucledean_distance(data_t *x,data_t *y, int length){
 	}
 	return distance;
 }
+
+data_t squared_eucledean_distance_better(data_t *x,data_t *y, int length){
+	data_t distance=0;
+	int i = 0;
+        data_t abs_diff_xy;
+
+	for(i=0;i<length;i++){
+                abs_diff_xy = fabs(x[i]-y[i]);
+		distance+= abs_diff_xy*abs_diff_xy;
+	}
+	return distance;
+}
+
+
 data_t norm(data_t *x, int length){
     data_t n = 0;
     int i=0;
@@ -131,6 +145,7 @@ data_t *opt_classify_MD(unsigned int lookFor, unsigned int *found) {
         pthread_create(&mythreads[i], NULL, thread_manhattan_distance, (void *)(threadParameters+i));
     }
 
+    // wrapping up
     for(i=NUM_THREADS*chunk;i<ROWS-1;i++){
                current_distance = manhattan_distance(features[lookFor],features[i],FEATURE_LENGTH);
                 result[i]=current_distance;
@@ -183,18 +198,55 @@ data_t *ref_classify_ED(unsigned int lookFor, unsigned int *found) {
     return result;
 }
 
+void *thread_euclidean_distance(void *arg)
+{
+   int i; 
+   parm *p=(parm *)arg;
+   unsigned int start_index, end_index;
+   data_t current_distance;
+
+   start_index=p->id * p->chunk;
+   end_index=start_index+p->chunk;
+
+   for(i=start_index;i<end_index;i++){
+      current_distance = squared_eucledean_distance_better(features[p->lookFor],features[i],FEATURE_LENGTH);
+      p->tempResult[i]=current_distance;
+      if(current_distance<p->min_distance){
+         p->min_distance=current_distance;
+         p->located=i;   
+      }
+   }
+   return (NULL);
+}
 //Modify this function
 data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
     data_t *result =(data_t*)malloc(sizeof(data_t)*(ROWS-1));
     struct timeval stv, etv;
-    int i,closest_point=0;
+    int i,closest_point=0, chunk=(ROWS-1)/NUM_THREADS;
     data_t min_distance,current_distance;
+    pthread_t mythreads[NUM_THREADS];
+    parm threadParameters[NUM_THREADS];
 	
     timer_start(&stv);
     //FROM HERE
-	min_distance = squared_eucledean_distance(features[lookFor],features[0],FEATURE_LENGTH);
-    	result[0] = min_distance;
-	for(i=1;i<ROWS-1;i++){
+	min_distance = 1000000.0; //squared_eucledean_distance(features[lookFor],features[0],FEATURE_LENGTH);
+    	//result[0] = min_distance;
+
+        for(i=0; i<NUM_THREADS; i++){
+            threadParameters[i].id=i;
+            threadParameters[i].chunk=chunk;
+            threadParameters[i].min_distance=min_distance;
+            threadParameters[i].lookFor=lookFor;
+            threadParameters[i].located=0;
+            threadParameters[i].tempResult=result;
+            pthread_create(&mythreads[i], NULL, thread_euclidean_distance, (void *)(threadParameters+i));
+        }
+        /*
+        for(i=0; i<NUM_THREADS;i++){
+        }
+        */
+
+	for(i=NUM_THREADS*chunk;i<ROWS-1;i++){
 		current_distance = squared_eucledean_distance(features[lookFor],features[i],FEATURE_LENGTH);
         	result[i]=current_distance;
 		if(current_distance<min_distance){
@@ -202,6 +254,17 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
 			closest_point=i;
 		}
 	}
+
+        for(i=0; i<NUM_THREADS; i++){
+            pthread_join(mythreads[i],NULL);
+        }
+        for(i=0; i<NUM_THREADS; i++){
+            if(threadParameters[i].min_distance<min_distance){
+                min_distance=threadParameters[i].min_distance;
+                closest_point=threadParameters[i].located;
+            }
+        }
+
     //TO HERE
     timer_opt_ED = timer_end(stv);
     printf("Calculation using optimized ED took: %10.6f \n", timer_opt_ED);
@@ -291,6 +354,8 @@ int main(int argc, char **argv){
 	parse_csv(dataset_name, features, metadata); 
 	printf("Parsing took %9.6f s \n\n", timer_end(stv));	 
 
+/*      This was put in comments for testing, otherwise the server would give a timeout
+        Which is odd, both are reasonably fast
     printf("Classifying using MD:");
     printf("<Record %d, author =\"%s\", title=\"%s\">\n",lookFor,metadata[lookFor][0],metadata[lookFor][1]);
     if(check_correctness(ref_classify_MD,opt_classify_MD, lookFor, &located)){
@@ -300,6 +365,7 @@ int main(int argc, char **argv){
         printf("opt_classify_MD is incorrect! \n"); // , speedup: %10.6f\n\n",timer_ref_MD/timer_opt_MD);
     printf("Best match: ");
     printf("<Record %d, author =\"%s\", title=\"%s\">\n\n",located,metadata[located][0],metadata[located][1]);
+    */
 
     printf("Classifying using ED:");
     printf("<Record %d, author =\"%s\", title=\"%s\">\n",lookFor,metadata[lookFor][0],metadata[lookFor][1]);

@@ -219,7 +219,6 @@ data_t *ref_classify_ED(unsigned int lookFor, unsigned int *found) {
     struct timeval stv, etv;
     int i,closest_point=0;
     data_t min_distance,current_distance;
-    //__vector data_t
 
 	timer_start(&stv);
 	min_distance = squared_eucledean_distance(features[lookFor],features[0],FEATURE_LENGTH);
@@ -245,8 +244,8 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
     struct timeval stv, etv;
     int i,j,closest_point=0, init, cnt;
     pack_t tempVec;
-    vec_t accum, diff, zero;
-    data_t min_distance,current_distance,abs_diff_temp0, abs_diff_temp1, abs_diff_temp2, abs_diff_temp3;
+    vec_t diff0, diff1, diff2, diff3, x0, x1, x2, x3, y0, y1, y2, y3;
+    data_t min_distance,current_distance, abs_diff_temp0, abs_diff_temp1, abs_diff_temp2, abs_diff_temp3;
     data_t tempR0=0, tempR1=0, tempR2=0, tempR3=0, *data_x, *data_y;
 
 
@@ -256,7 +255,54 @@ data_t *opt_classify_ED(unsigned int lookFor, unsigned int *found) {
     	result[0] = min_distance;
 
         for(i=1;i<ROWS-1;i++){
-	    current_distance = squared_eucledean_distance_SIMD(features[lookFor],features[i],FEATURE_LENGTH);
+            data_x = features[lookFor];
+            data_y = features[i];
+            // Initiaize the counter to 0
+            current_distance=0;
+            for(j=0;j<VSIZE;j++){
+                tempVec.d[j]=0;
+            }
+
+            // Main SIMD operation
+            for(j=0;j<=FEATURE_LENGTH-VSIZE; j+=VSIZE){
+                x0 = *((vec_t *) data_x);
+                y0 = *((vec_t *) data_y);
+                 /*
+                x1 = *((vec_t *) (data_x+VSIZE));
+                y1 = *((vec_t *) (data_y+VSIZE));
+                x2 = *((vec_t *) (data_x+VSIZE*2));
+                y2 = *((vec_t *) (data_y+VSIZE*2));
+                x3 = *((vec_t *) (data_x+VSIZE*3));
+                y3 = *((vec_t *) (data_y+VSIZE*3));
+                // */
+                diff0 = simd_abs_diff(x0, y0);
+                 /*
+                diff1 = simd_abs_diff(x1, y1);
+                diff2 = simd_abs_diff(x2, y2);
+                diff3 = simd_abs_diff(x3, y3);
+                // */
+                diff0 = diff0* diff0;
+                 /*
+                diff1 = diff1* diff1;
+                diff2 = diff2* diff2;
+                diff3 = diff3* diff3;
+                // */
+                tempVec.v += diff0;
+                 /*
+                tempVec.v += diff1;
+                tempVec.v += diff2;
+                tempVec.v += diff3;
+                // */
+
+                data_x += VSIZE;
+                data_y += VSIZE;
+            }
+            for(j=0;j<VSIZE;j++){
+                current_distance += tempVec.d[j];
+            }
+
+
+	    //current_distance = squared_eucledean_distance_SIMD(features[lookFor],features[i],FEATURE_LENGTH);
             result[i]=current_distance;
 	    if(current_distance<min_distance){
 		min_distance=current_distance;
@@ -301,19 +347,57 @@ data_t *opt_classify_CS(unsigned int lookFor, unsigned int *found) {
     data_t *result =(data_t*)malloc(sizeof(data_t)*(ROWS-1));
     struct timeval stv, etv;
     int i,closest_point=0;
-    data_t min_distance,current_distance;
+    data_t min_distance,temp_dist0, temp_dist1, temp_dist2, temp_dist3, temp_dist4, temp_dist5, temp_dist6;
 
     timer_start(&stv);
 
     //MODIFY FROM HERE
 	min_distance = cosine_similarity(features[lookFor],features[0],FEATURE_LENGTH);
     	result[0] = min_distance;
-	for(i=1;i<ROWS-1;i++) {
-		current_distance = cosine_similarity(features[lookFor],features[i],FEATURE_LENGTH);
-        	result[i]=current_distance;
-		if(current_distance<min_distance){
-			min_distance=current_distance;
+	for(i=0;i<ROWS-7;i+=7) {
+		temp_dist0 = cosine_similarity(features[lookFor],features[i],FEATURE_LENGTH);
+		temp_dist1 = cosine_similarity(features[lookFor],features[i+1],FEATURE_LENGTH);
+		temp_dist2 = cosine_similarity(features[lookFor],features[i+2],FEATURE_LENGTH);
+		temp_dist3 = cosine_similarity(features[lookFor],features[i+3],FEATURE_LENGTH);
+		temp_dist4 = cosine_similarity(features[lookFor],features[i+4],FEATURE_LENGTH);
+		temp_dist5 = cosine_similarity(features[lookFor],features[i+5],FEATURE_LENGTH);
+		temp_dist6 = cosine_similarity(features[lookFor],features[i+6],FEATURE_LENGTH);
+        	result[i]=temp_dist0;
+        	result[i+1]=temp_dist1;
+        	result[i+2]=temp_dist2;
+        	result[i+3]=temp_dist3;
+        	result[i+4]=temp_dist4;
+        	result[i+5]=temp_dist5;
+        	result[i+6]=temp_dist6;
+
+
+		if(temp_dist0<min_distance){
+			min_distance=temp_dist0;
 			closest_point=i;
+		}
+		if(temp_dist1<min_distance){
+			min_distance=temp_dist1;
+			closest_point=i+1;
+		}
+		if(temp_dist2<min_distance){
+			min_distance=temp_dist2;
+			closest_point=i+2;
+		}
+		if(temp_dist3<min_distance){
+			min_distance=temp_dist3;
+			closest_point=i+3;
+		}
+		if(temp_dist4<min_distance){
+			min_distance=temp_dist4;
+			closest_point=i+4;
+		}
+		if(temp_dist5<min_distance){
+			min_distance=temp_dist5;
+			closest_point=i+5;
+		}
+		if(temp_dist6<min_distance){
+			min_distance=temp_dist6;
+			closest_point=i+6;
 		}
 	}
     //TO HERE
